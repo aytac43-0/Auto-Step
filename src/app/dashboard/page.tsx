@@ -6,6 +6,7 @@ import { AutomationsList } from "./AutomationsList";
 import { UserSettings } from "./UserSettings";
 import { SubscriptionCard } from "./SubscriptionCard";
 import { MyProducts } from "./MyProducts";
+import { SubscriptionBadge } from "./SubscriptionBadge";
 import { Activity, Zap, Shield } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -105,6 +106,7 @@ export default async function DashboardPage() {
                         <SubscriptionCard subscription={subscription} plans={plans} />
                     </div>
                     <div className="space-y-12">
+                        <SubscriptionBadge subscription={subscription} />
                         <UserSettings profile={profile} />
                     </div>
                 </div>

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -27,29 +28,42 @@ export default function Home() {
 
       {/* Hero Section */}
       <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 text-center lg:px-8">
+        <style dangerouslySetInnerHTML={{
+          __html: `
+          @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-fade-up {
+            opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+          }
+        `}} />
         <div className="max-w-3xl">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl text-slate-100">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl text-slate-100 animate-fade-up" style={{ animationDelay: '0.2s' }}>
             Digital Automation, <br className="hidden sm:block" />
             <span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
               Done Right.
             </span>
           </h1>
 
-          <p className="mt-6 text-lg leading-8 text-slate-400 max-w-2xl mx-auto">
+          <p className="mt-6 text-lg leading-8 text-slate-400 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: '0.4s' }}>
             We design and build scalable automation systems for modern businesses.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              className="w-full sm:w-auto px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-slate-200 transition-colors duration-200"
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up" style={{ animationDelay: '0.6s' }}>
+            <Link
+              href="/register"
+              className="w-full sm:w-auto px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-slate-200 transition-colors duration-200 text-center"
             >
               Get Started
-            </button>
-            <button
-              className="w-full sm:w-auto px-8 py-4 bg-slate-900 text-white font-semibold rounded-full border border-slate-800 hover:bg-slate-800 transition-colors duration-200"
+            </Link>
+            <Link
+              href="/login"
+              className="w-full sm:w-auto px-8 py-4 bg-slate-900 text-white font-semibold rounded-full border border-slate-800 hover:bg-slate-800 transition-colors duration-200 text-center"
             >
               Contact Us
-            </button>
+            </Link>
           </div>
         </div>
       </main>

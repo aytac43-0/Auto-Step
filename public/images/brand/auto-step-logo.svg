@@ -1,0 +1,14 @@
+<svg width="180" height="48" viewBox="0 0 180 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logo-gradient" x1="0" y1="0" x2="180" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#60A5FA" />
+      <stop offset="1" stop-color="#34D399" />
+    </linearGradient>
+  </defs>
+  <!-- Icon Part (A and Step) -->
+  <path d="M12 36L20 20L28 36M16 32H24" stroke="url(#logo-gradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M32 36H40V28H48V20H56" stroke="url(#logo-gradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Text Part -->
+  <text x="64" y="34" fill="white" style="font-family: sans-serif; font-weight: 700; font-size: 24px; letter-spacing: -0.02em;">Auto Step</text>
+</svg>

@@ -3,6 +3,7 @@ create table profiles (
   id uuid primary key default uuid_generate_v4(),
   user_id uuid references auth.users not null unique,
   email text not null,
+  username text not null unique,
   role text not null default 'user' check (role in ('user', 'admin')),
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

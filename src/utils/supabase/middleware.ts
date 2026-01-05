@@ -59,24 +59,38 @@ export async function updateSession(request: NextRequest) {
     // Protection logic
     const { pathname } = request.nextUrl;
 
+    // 1. Logged out users: Redirect to login if accessing protected routes
     if (!user && (pathname.startsWith("/dashboard") || pathname.startsWith("/admin"))) {
         return NextResponse.redirect(new URL("/login", request.url));
     }
 
-    if (user && (pathname === "/login" || pathname === "/register")) {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
+    // 2. Logged in users: Verification & Auth page logic
+    if (user) {
+        const isEmailVerified = !!user.email_confirmed_at;
 
-    // Admin protection
-    if (user && pathname.startsWith("/admin")) {
-        const { data: profile } = await supabase
-            .from("profiles")
-            .select("role")
-            .eq("user_id", user.id)
-            .single();
+        // Redirect unverified users away from dashboard/admin (unless on verification notice page)
+        if (!isEmailVerified && (pathname.startsWith("/dashboard") || pathname.startsWith("/admin"))) {
+            if (pathname !== "/auth/verify-email") {
+                return NextResponse.redirect(new URL(`/auth/verify-email?email=${user.email}`, request.url));
+            }
+        }
 
-        if (profile?.role !== "admin") {
+        // Redirect verified users away from login/register
+        if (isEmailVerified && (pathname === "/login" || pathname === "/register")) {
             return NextResponse.redirect(new URL("/dashboard", request.url));
+        }
+
+        // 3. Admin protection (Strictly DB-only role check)
+        if (pathname.startsWith("/admin")) {
+            const { data: profile } = await supabase
+                .from("profiles")
+                .select("role")
+                .eq("user_id", user.id)
+                .single();
+
+            if (profile?.role !== "admin") {
+                return NextResponse.redirect(new URL("/dashboard", request.url));
+            }
         }
     }
 

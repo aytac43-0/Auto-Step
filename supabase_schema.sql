@@ -83,6 +83,8 @@ create table purchases (
   id uuid primary key default uuid_generate_v4(),
   user_id uuid references auth.users not null,
   product_id uuid references products not null,
+  merchant_oid text unique,
+  status text not null default 'pending' check (status in ('pending', 'paid', 'failed')),
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 

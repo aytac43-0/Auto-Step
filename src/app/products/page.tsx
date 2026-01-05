@@ -54,7 +54,7 @@ export default async function ProductsPage() {
                                     <span className="text-4xl font-bold">${product.price}</span>
                                     <span className="text-slate-500 text-sm italic">/ one-time</span>
                                 </div>
-                                <BuyButton productId={product.id} productName={product.name} isLoggedIn={!!user} />
+                                <BuyButton productId={product.id} productName={product.name} price={product.price} isLoggedIn={!!user} />
                             </div>
                         ))}
                     </div>

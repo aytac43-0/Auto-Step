@@ -100,7 +100,7 @@ export default async function DashboardPage() {
 
                 <div className="grid lg:grid-cols-3 gap-12">
                     <div className="lg:col-span-2 space-y-12">
-                        <AutomationsList initialAutomations={automations} />
+                        <AutomationsList initialAutomations={automations} isAdmin={profile?.role === 'admin'} />
                         <MyProducts purchases={purchases} />
                         <SubscriptionCard subscription={subscription} plans={plans} />
                     </div>

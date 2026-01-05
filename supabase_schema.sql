@@ -45,14 +45,29 @@ alter table automations enable row level security;
 create policy "Users can view own automations." on automations
   for select using (auth.uid() = user_id);
 
-create policy "Users can insert own automations." on automations
-  for insert with check (auth.uid() = user_id);
+create policy "Admins can insert automations." on automations
+  for insert with check (
+    exists (
+      select 1 from profiles
+      where user_id = auth.uid() and role = 'admin'
+    )
+  );
 
-create policy "Users can update own automations." on automations
-  for update using (auth.uid() = user_id);
+create policy "Admins can update automations." on automations
+  for update using (
+    exists (
+      select 1 from profiles
+      where user_id = auth.uid() and role = 'admin'
+    )
+  );
 
-create policy "Users can delete own automations." on automations
-  for delete using (auth.uid() = user_id);
+create policy "Admins can delete automations." on automations
+  for delete using (
+    exists (
+      select 1 from profiles
+      where user_id = auth.uid() and role = 'admin'
+    )
+  );
 
 -- Create products table
 create table products (

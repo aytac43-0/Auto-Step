@@ -22,7 +22,7 @@ export async function GET(
         .single();
 
     if (productError || !product || !product.access_url) {
-        return redirect("/purchase/expired");
+        return redirect("/products");
     }
 
     // 3. Check if user has purchased this product
@@ -35,21 +35,22 @@ export async function GET(
         .single();
 
     if (!purchase) {
-        return redirect("/purchase/expired");
+        return redirect("/products");
     }
 
-    // 4. Check subscription status (if product requires subscription)
+    // 4. Check subscription status
     const { data: subscription } = await supabase
         .from("subscriptions")
         .select("*")
         .eq("user_id", user.id)
         .single();
 
-    // Validate subscription is active and not expired
+    // Validate subscription is active or in grace period
     const isSubscriptionValid = subscription &&
-        subscription.status === 'active' &&
+        (subscription.status === 'active' || subscription.status === 'grace') &&
         new Date(subscription.current_period_end) > new Date();
 
+    // If no valid subscription, redirect to expired page
     if (!isSubscriptionValid) {
         return redirect("/purchase/expired");
     }

@@ -80,20 +80,22 @@ export async function updateSession(request: NextRequest) {
             return NextResponse.redirect(new URL("/dashboard", request.url));
         }
 
-        // 3. Subscription Enforcement
-        if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) {
+        // 3. Subscription Enforcement - ONLY for /access/* routes
+        // Dashboard and admin are accessible to FREE users (no subscription)
+        if (pathname.startsWith("/access/")) {
             const { data: subscription } = await supabase
                 .from("subscriptions")
                 .select("*")
                 .eq("user_id", user.id)
                 .single();
 
-            // Allow access if subscription is active OR in grace period
+            // Check if subscription exists and is valid
+            // FREE users (no subscription) will be blocked from /access/* routes
             const isSubscriptionValid = subscription &&
                 (subscription.status === 'active' || subscription.status === 'grace') &&
-                new Date(subscription.current_period_end) > new Date(Date.now() - (4 * 24 * 60 * 60 * 1000)); // Allow up to 4 days past expiration
+                new Date(subscription.current_period_end) > new Date();
 
-            if (!isSubscriptionValid && pathname !== "/purchase/expired" && !pathname.startsWith("/api")) {
+            if (!isSubscriptionValid) {
                 return NextResponse.redirect(new URL("/purchase/expired", request.url));
             }
         }

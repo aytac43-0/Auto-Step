@@ -88,13 +88,12 @@ export async function updateSession(request: NextRequest) {
                 .eq("user_id", user.id)
                 .single();
 
-            const isSubscriptionActive = subscription &&
-                subscription.status === 'active' &&
-                new Date(subscription.current_period_end) > new Date();
+            // Allow access if subscription is active OR in grace period
+            const isSubscriptionValid = subscription &&
+                (subscription.status === 'active' || subscription.status === 'grace') &&
+                new Date(subscription.current_period_end) > new Date(Date.now() - (4 * 24 * 60 * 60 * 1000)); // Allow up to 4 days past expiration
 
-            if (!isSubscriptionActive && pathname !== "/purchase/expired" && !pathname.startsWith("/api")) {
-                // Allow access to settings or specific public-facing dashboard parts if needed, 
-                // but here we enforce strict access as requested.
+            if (!isSubscriptionValid && pathname !== "/purchase/expired" && !pathname.startsWith("/api")) {
                 return NextResponse.redirect(new URL("/purchase/expired", request.url));
             }
         }

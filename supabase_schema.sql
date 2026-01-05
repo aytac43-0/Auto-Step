@@ -128,8 +128,10 @@ create table subscriptions (
   id uuid primary key default uuid_generate_v4(),
   user_id uuid references auth.users not null,
   plan_id uuid references plans not null,
-  status text not null default 'active' check (status in ('active', 'past_due', 'canceled')),
+  status text not null default 'active' check (status in ('active', 'past_due', 'canceled', 'grace', 'expired')),
   current_period_end timestamp with time zone not null,
+  grace_started_at timestamp with time zone,
+  last_notification_day integer default 0,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   unique(user_id)
 );
@@ -165,8 +167,11 @@ alter table purchases add column plan_id uuid references plans;
 create or replace function check_expired_subscriptions()
 returns void as $$
 begin
+  -- Move expired active subscriptions to grace period
   update subscriptions
-  set status = 'past_due'
+  set status = 'grace',
+      grace_started_at = now(),
+      last_notification_day = 0
   where status = 'active'
   and current_period_end < now();
 end;

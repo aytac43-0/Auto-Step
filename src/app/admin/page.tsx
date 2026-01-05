@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ProductList } from "./ProductList";
+import { PaymentIssuesPanel } from "./PaymentIssuesPanel";
 import { ShoppingBag, Users, Activity, Zap, Shield, ArrowLeft, Globe } from "lucide-react";
 
 export default async function AdminPage() {
@@ -25,7 +26,7 @@ export default async function AdminPage() {
     }
 
     // Fetch Admin Stats
-    const [usersCount, productsResponse, purchasesResponse, subsResponse] = await Promise.all([
+    const [usersCount, productsResponse, purchasesResponse, subsResponse, graceSubsResponse] = await Promise.all([
         supabase.from("profiles").select("*", { count: 'exact', head: true }),
         supabase.from("products").select("*").order("name", { ascending: true }),
         supabase.from("purchases").select(`
@@ -38,12 +39,18 @@ export default async function AdminPage() {
       *,
       profiles (email),
       plans (name)
-    `).order('current_period_end', { ascending: false })
+    `).order('current_period_end', { ascending: false }),
+        supabase.from("subscriptions").select(`
+      *,
+      profiles (email),
+      plans (name)
+    `).eq('status', 'grace').order('grace_started_at', { ascending: true })
     ]);
 
     const products = productsResponse.data || [];
     const purchases = purchasesResponse.data || [];
     const subscriptions = subsResponse.data || [];
+    const graceSubscriptions = graceSubsResponse.data || [];
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white">
@@ -91,6 +98,9 @@ export default async function AdminPage() {
 
                 <div className="grid lg:grid-cols-3 gap-12">
                     <div className="lg:col-span-3 space-y-12">
+                        {/* Payment Issues Alert */}
+                        <PaymentIssuesPanel graceSubscriptions={graceSubscriptions} />
+
                         {/* Product Management */}
                         <ProductList products={products} />
 

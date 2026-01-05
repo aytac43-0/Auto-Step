@@ -80,7 +80,26 @@ export async function updateSession(request: NextRequest) {
             return NextResponse.redirect(new URL("/dashboard", request.url));
         }
 
-        // 3. Admin protection (Strictly DB-only role check)
+        // 3. Subscription Enforcement
+        if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) {
+            const { data: subscription } = await supabase
+                .from("subscriptions")
+                .select("*")
+                .eq("user_id", user.id)
+                .single();
+
+            const isSubscriptionActive = subscription &&
+                subscription.status === 'active' &&
+                new Date(subscription.current_period_end) > new Date();
+
+            if (!isSubscriptionActive && pathname !== "/purchase/expired" && !pathname.startsWith("/api")) {
+                // Allow access to settings or specific public-facing dashboard parts if needed, 
+                // but here we enforce strict access as requested.
+                return NextResponse.redirect(new URL("/purchase/expired", request.url));
+            }
+        }
+
+        // 4. Admin protection (Strictly DB-only role check)
         if (pathname.startsWith("/admin")) {
             const { data: profile } = await supabase
                 .from("profiles")

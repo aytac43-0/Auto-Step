@@ -110,3 +110,66 @@ insert into products (name, description, price) values
 ('Starter Pack', 'Perfect for individuals starting their automation journey.', 29.00),
 ('Pro Automation', 'Advanced features for businesses and power users.', 99.00),
 ('Enterprise Solution', 'Custom workflows and dedicated support for scale.', 499.00);
+
+-- Create plans table
+create table plans (
+  id uuid primary key default uuid_generate_v4(),
+  name text not null,
+  description text,
+  price numeric(10, 2) not null,
+  interval text not null default 'monthly',
+  active boolean not null default true,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Create subscriptions table
+create table subscriptions (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid references auth.users not null,
+  plan_id uuid references plans not null,
+  status text not null default 'active' check (status in ('active', 'past_due', 'canceled')),
+  current_period_end timestamp with time zone not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  unique(user_id)
+);
+
+-- Set up RLS
+alter table plans enable row level security;
+alter table subscriptions enable row level security;
+
+create policy "Everyone can view active plans." on plans
+  for select using (active = true);
+
+create policy "Users can view own subscription." on subscriptions
+  for select using (auth.uid() = user_id);
+
+create policy "Admins can view all subscriptions." on subscriptions
+  for select using (
+    exists (
+      select 1 from profiles
+      where user_id = auth.uid() and role = 'admin'
+    )
+  );
+
+-- Seed plans
+insert into plans (name, description, price, interval) values 
+('Basic Plan', 'Access to essential automation features.', 49.00, 'monthly'),
+('Pro Plan', 'Power features and increased automation limits.', 149.00, 'monthly'),
+('Enterprise Plan', 'Unlimited scale and dedicated infrastructure.', 499.00, 'monthly');
+
+-- Add plan_id to purchases for tracking
+alter table purchases add column plan_id uuid references plans;
+
+-- Function to check and update expired subscriptions
+create or replace function check_expired_subscriptions()
+returns void as $$
+begin
+  update subscriptions
+  set status = 'past_due'
+  where status = 'active'
+  and current_period_end < now();
+end;
+$$ language plpgsql;
+
+-- In a real Supabase env, you would use pg_cron or an Edge Function cron
+-- to call `select check_expired_subscriptions();` daily.

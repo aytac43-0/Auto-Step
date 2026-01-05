@@ -46,7 +46,7 @@ export async function POST(request: Request) {
             // Find the purchase and user
             const { data: purchase, error: findError } = await supabase
                 .from('purchases')
-                .select('*, profiles(email), products(name)')
+                .select('*, profiles(email), products(name), plans(name)')
                 .eq('merchant_oid', merchant_oid)
                 .single();
 
@@ -61,10 +61,39 @@ export async function POST(request: Request) {
                 .update({ status: 'paid' })
                 .eq('id', purchase.id);
 
+            // Handle Subscription Fulfillment
+            if (purchase.plan_id) {
+                // Check if user already has a subscription
+                const { data: currentSub } = await supabase
+                    .from('subscriptions')
+                    .select('*')
+                    .eq('user_id', purchase.user_id)
+                    .single();
+
+                let newPeriodEnd = new Date();
+
+                if (currentSub && new Date(currentSub.current_period_end) > new Date()) {
+                    // Extend existing active subscription
+                    newPeriodEnd = new Date(currentSub.current_period_end);
+                }
+
+                // Add 30 days
+                newPeriodEnd.setDate(newPeriodEnd.getDate() + 30);
+
+                await supabase
+                    .from('subscriptions')
+                    .upsert({
+                        user_id: purchase.user_id,
+                        plan_id: purchase.plan_id,
+                        status: 'active',
+                        current_period_end: newPeriodEnd.toISOString()
+                    }, { onConflict: 'user_id' });
+            }
+
             // Notify Admin
             await sendAdminNotification(
                 purchase.profiles?.email || 'Unknown',
-                purchase.products?.name || 'Unknown Product'
+                purchase.products?.name || purchase.plans?.name || 'Unknown Item'
             );
 
         } else {

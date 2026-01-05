@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import { generatePaytrToken } from '@/utils/paytr'
 import { headers } from 'next/headers'
 
-export async function getPaytrToken(productId: string, productName: string, price: number) {
+export async function getPaytrToken(productId: string | null, productName: string, price: number, planId: string | null = null) {
     const supabase = createClient()
     const headerList = headers()
 
@@ -17,6 +17,7 @@ export async function getPaytrToken(productId: string, productName: string, pric
         .insert([{
             user_id: user.id,
             product_id: productId,
+            plan_id: planId,
             status: 'pending'
         }])
         .select()

@@ -4,6 +4,7 @@ import { logout } from "../auth/actions";
 import Link from "next/link";
 import { AutomationsList } from "./AutomationsList";
 import { UserSettings } from "./UserSettings";
+import { SubscriptionCard } from "./SubscriptionCard";
 import { Activity, Zap, Shield } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -17,13 +18,17 @@ export default async function DashboardPage() {
     }
 
     // Fetch real data
-    const [profileResponse, automationsResponse] = await Promise.all([
+    const [profileResponse, automationsResponse, subResponse, plansResponse] = await Promise.all([
         supabase.from("profiles").select("*").eq("user_id", user.id).single(),
-        supabase.from("automations").select("*").eq("user_id", user.id).order('created_at', { ascending: false })
+        supabase.from("automations").select("*").eq("user_id", user.id).order('created_at', { ascending: false }),
+        supabase.from("subscriptions").select("*, plans(*)").eq("user_id", user.id).single(),
+        supabase.from("plans").select("*").eq("active", true).order("price", { ascending: true })
     ]);
 
     const profile = profileResponse.data;
     const automations = automationsResponse.data || [];
+    const subscription = subResponse.data;
+    const plans = plansResponse.data || [];
 
     const metrics = {
         total: automations.length,
@@ -93,6 +98,7 @@ export default async function DashboardPage() {
                 <div className="grid lg:grid-cols-3 gap-12">
                     <div className="lg:col-span-2 space-y-12">
                         <AutomationsList initialAutomations={automations} />
+                        <SubscriptionCard subscription={subscription} plans={plans} />
                     </div>
                     <div className="space-y-12">
                         <UserSettings profile={profile} />

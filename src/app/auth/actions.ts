@@ -83,7 +83,7 @@ export async function signup(formData: FormData) {
     }
 
     revalidatePath('/', 'layout')
-    redirect('/dashboard')
+    redirect(`/auth/verify-email?email=${email}`)
 }
 
 export async function forgotPassword(formData: FormData) {

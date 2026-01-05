@@ -1,9 +1,10 @@
 'use client'
 
-import { ShoppingBag, ArrowRight, Lock } from 'lucide-react'
+import { ShoppingBag, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 
 export function MyProducts({ purchases }: { purchases: any[] }) {
-    // Filter out paid purchases
+    // Filter out paid purchases with products
     const paidPurchases = purchases.filter(p => p.status === 'paid' && p.products);
 
     if (paidPurchases.length === 0) return null;
@@ -17,18 +18,18 @@ export function MyProducts({ purchases }: { purchases: any[] }) {
 
             <div className="grid gap-4">
                 {paidPurchases.map((purchase) => (
-                    <div key={purchase.id} className="bg-slate-950/50 border border-slate-800 p-6 rounded-2xl flex items-center justify-between group hover:border-slate-700 transition-all">
+                    <div key={purchase.id} className="bg-slate-950/50 border border-slate-800 p-6 rounded-2xl flex items-center justify-between group hover:border-emerald-500/30 transition-all">
                         <div>
                             <h3 className="font-bold text-lg">{purchase.products.name}</h3>
-                            <p className="text-slate-500 text-sm tracking-tight">{purchase.products.description}</p>
+                            <p className="text-slate-500 text-sm">{purchase.products.description}</p>
                         </div>
-                        <button 
-                            disabled 
-                            className="px-6 py-2 bg-slate-800 text-slate-400 rounded-xl text-sm font-bold flex items-center gap-2 cursor-not-allowed group-hover:bg-slate-700 transition-all"
+                        <Link
+                            href={`/access/product/${purchase.products.id}`}
+                            className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-bold flex items-center gap-2 transition-all"
                         >
-                            <Lock size={16} />
                             Access Product
-                        </button>
+                            <ArrowRight size={16} />
+                        </Link>
                     </div>
                 ))}
             </div>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AutomationsList } from "./AutomationsList";
 import { UserSettings } from "./UserSettings";
 import { SubscriptionCard } from "./SubscriptionCard";
+import { MyProducts } from "./MyProducts";
 import { Activity, Zap, Shield } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -18,17 +19,19 @@ export default async function DashboardPage() {
     }
 
     // Fetch real data
-    const [profileResponse, automationsResponse, subResponse, plansResponse] = await Promise.all([
+    const [profileResponse, automationsResponse, subResponse, plansResponse, purchasesResponse] = await Promise.all([
         supabase.from("profiles").select("*").eq("user_id", user.id).single(),
         supabase.from("automations").select("*").eq("user_id", user.id).order('created_at', { ascending: false }),
         supabase.from("subscriptions").select("*, plans(*)").eq("user_id", user.id).single(),
-        supabase.from("plans").select("*").eq("active", true).order("price", { ascending: true })
+        supabase.from("plans").select("*").eq("active", true).order("price", { ascending: true }),
+        supabase.from("purchases").select("*, products(id, name, description, price)").eq("user_id", user.id)
     ]);
 
     const profile = profileResponse.data;
     const automations = automationsResponse.data || [];
     const subscription = subResponse.data;
     const plans = plansResponse.data || [];
+    const purchases = purchasesResponse.data || [];
 
     const metrics = {
         total: automations.length,
@@ -98,6 +101,7 @@ export default async function DashboardPage() {
                 <div className="grid lg:grid-cols-3 gap-12">
                     <div className="lg:col-span-2 space-y-12">
                         <AutomationsList initialAutomations={automations} />
+                        <MyProducts purchases={purchases} />
                         <SubscriptionCard subscription={subscription} plans={plans} />
                     </div>
                     <div className="space-y-12">

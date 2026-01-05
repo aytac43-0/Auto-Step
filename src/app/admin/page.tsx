@@ -1,7 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ShoppingBag, Users, Activity, Zap, Shield, ArrowLeft } from "lucide-react";
+import { ProductList } from "./ProductList";
+import { ShoppingBag, Users, Activity, Zap, Shield, ArrowLeft, Globe } from "lucide-react";
 
 export default async function AdminPage() {
     const supabase = createClient();
@@ -24,9 +25,9 @@ export default async function AdminPage() {
     }
 
     // Fetch Admin Stats
-    const [usersCount, productsCount, purchasesResponse, subsResponse] = await Promise.all([
+    const [usersCount, productsResponse, purchasesResponse, subsResponse] = await Promise.all([
         supabase.from("profiles").select("*", { count: 'exact', head: true }),
-        supabase.from("products").select("*", { count: 'exact', head: true }),
+        supabase.from("products").select("*").order("name", { ascending: true }),
         supabase.from("purchases").select(`
       *,
       profiles (email),
@@ -40,6 +41,7 @@ export default async function AdminPage() {
     `).order('current_period_end', { ascending: false })
     ]);
 
+    const products = productsResponse.data || [];
     const purchases = purchasesResponse.data || [];
     const subscriptions = subsResponse.data || [];
 
@@ -89,6 +91,9 @@ export default async function AdminPage() {
 
                 <div className="grid lg:grid-cols-3 gap-12">
                     <div className="lg:col-span-3 space-y-12">
+                        {/* Product Management */}
+                        <ProductList products={products} />
+
                         {/* Subscriptions Table */}
                         <div className="bg-slate-900/30 border border-slate-800 rounded-3xl overflow-hidden">
                             <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">

@@ -1,4 +1,3 @@
-```javascript
 import { createClient } from '@/utils/supabase/server';
 import { sendGraceNotification, sendGraceReminder, sendGraceFinalWarning, sendGraceAdminAlert, sendSubscriptionExpiredNotification } from '@/utils/grace-emails';
 
@@ -21,7 +20,12 @@ export async function processGracePeriods() {
         const now = new Date();
         const daysSinceGrace = Math.floor((now.getTime() - graceStarted.getTime()) / (1000 * 60 * 60 * 24));
 
-        console.log(`[GRACE PROCESSOR] Processing ${ sub.profiles?.email } - Day ${ daysSinceGrace } `);
+        console.log(
+            "GRACE_PROCESSOR | Processing",
+            sub.profiles?.email,
+            "| Day:",
+            daysSinceGrace
+        );
 
         // Prevent duplicate notifications
         if (daysSinceGrace === sub.last_notification_day) {
@@ -62,7 +66,10 @@ export async function processGracePeriods() {
 
             // Day 4+: Expire subscription
             if (daysSinceGrace >= 4) {
-                console.log(`[GRACE PROCESSOR] Expiring subscription for ${ userEmail }`);
+                console.log(
+                    "GRACE_PROCESSOR | Expiring subscription for",
+                    userEmail
+                );
                 await sendSubscriptionExpiredNotification(userEmail, planName);
                 await sendGraceAdminAlert(userEmail, planName, daysSinceGrace);
                 await supabase
@@ -71,11 +78,15 @@ export async function processGracePeriods() {
                     .eq('id', sub.id);
             }
         } catch (error) {
-            console.error(`[GRACE PROCESSOR ERROR] Failed to process ${ userEmail }: `, error);
+            console.error(
+                "GRACE_PROCESSOR ERROR | Failed to process",
+                userEmail,
+                ":",
+                error
+            );
             // Continue processing other subscriptions even if one fails
         }
     }
 
     console.log('[GRACE PROCESSOR] Processing complete');
 }
-```

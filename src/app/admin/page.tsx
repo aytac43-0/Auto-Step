@@ -3,9 +3,14 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ProductList } from "./ProductList";
 import { PaymentIssuesPanel } from "./PaymentIssuesPanel";
-import { ShoppingBag, Users, Activity, Zap, Shield, ArrowLeft, Globe } from "lucide-react";
+import { SubscriptionManager } from "./SubscriptionManager";
+import { ShoppingBag, Users, Activity, Zap, Shield, ArrowLeft, Globe, AlertTriangle, CheckCircle, Clock } from "lucide-react";
 
-export default async function AdminPage() {
+export default async function AdminPage({
+    searchParams,
+}: {
+    searchParams: { filter?: string };
+}) {
     const supabase = createClient();
     const {
         data: { user },
@@ -24,6 +29,8 @@ export default async function AdminPage() {
     if (profile?.role !== "admin") {
         return redirect("/dashboard");
     }
+
+    const filter = searchParams.filter || 'issues'; // Default to issues (grace + expired)
 
     // Fetch Admin Stats
     const [usersCount, productsResponse, purchasesResponse, subsResponse, graceSubsResponse] = await Promise.all([
@@ -49,8 +56,33 @@ export default async function AdminPage() {
 
     const products = productsResponse.data || [];
     const purchases = purchasesResponse.data || [];
-    const subscriptions = subsResponse.data || [];
+    const allSubscriptions = subsResponse.data || [];
     const graceSubscriptions = graceSubsResponse.data || [];
+
+    // Filter subscriptions based on tab
+    let filteredSubscriptions = allSubscriptions;
+    if (filter === 'active') {
+        filteredSubscriptions = allSubscriptions.filter((s: any) => s.status === 'active');
+    } else if (filter === 'grace') {
+        filteredSubscriptions = graceSubscriptions;
+    } else if (filter === 'expired') {
+        filteredSubscriptions = allSubscriptions.filter((s: any) => s.status === 'expired');
+    } else if (filter === 'issues') {
+        // Grace + Expired
+        filteredSubscriptions = allSubscriptions.filter((s: any) =>
+            s.status === 'grace' || s.status === 'expired'
+        );
+    }
+
+    // Calculate KPIs
+    const activeCount = allSubscriptions.filter((s: any) => s.status === 'active').length;
+    const graceCount = graceSubscriptions.length;
+    const expiredTodayCount = allSubscriptions.filter((s: any) => {
+        if (s.status !== 'expired') return false;
+        const periodEnd = new Date(s.current_period_end);
+        const today = new Date();
+        return periodEnd.toDateString() === today.toDateString();
+    }).length;
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white">
@@ -75,82 +107,50 @@ export default async function AdminPage() {
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <h1 className="text-4xl font-bold mb-8">System Overview</h1>
 
+                {/* KPI Summary */}
                 <div className="grid md:grid-cols-4 gap-6 mb-12">
                     <div className="bg-blue-500/10 border border-blue-500/20 p-6 rounded-2xl">
                         <p className="text-blue-400 text-sm font-medium mb-1">Total Users</p>
                         <p className="text-3xl font-bold">{usersCount.count || 0}</p>
                     </div>
                     <div className="bg-emerald-500/10 border border-emerald-500/20 p-6 rounded-2xl">
-                        <p className="text-emerald-400 text-sm font-medium mb-1">Subscriptions</p>
-                        <p className="text-3xl font-bold">{subscriptions.filter((s: any) => s.status === 'active').length}</p>
-                    </div>
-                    <div className="bg-purple-500/10 border border-purple-500/20 p-6 rounded-2xl">
-                        <p className="text-purple-400 text-sm font-medium mb-1">Total Sales</p>
-                        <p className="text-3xl font-bold">{purchases.length}</p>
+                        <div className="flex items-center gap-2 mb-1">
+                            <CheckCircle size={16} className="text-emerald-400" />
+                            <p className="text-emerald-400 text-sm font-medium">Active Subscriptions</p>
+                        </div>
+                        <p className="text-3xl font-bold">{activeCount}</p>
                     </div>
                     <div className="bg-amber-500/10 border border-amber-500/20 p-6 rounded-2xl">
-                        <p className="text-amber-400 text-sm font-medium mb-1">Revenue</p>
-                        <p className="text-3xl font-bold">
-                            ${purchases.reduce((acc: number, curr: any) => acc + (curr.products?.price || curr.plans?.price || 0), 0)}
-                        </p>
+                        <div className="flex items-center gap-2 mb-1">
+                            <Clock size={16} className="text-amber-400" />
+                            <p className="text-amber-400 text-sm font-medium">Users in Grace</p>
+                        </div>
+                        <p className="text-3xl font-bold">{graceCount}</p>
+                    </div>
+                    <div className="bg-red-500/10 border border-red-500/20 p-6 rounded-2xl">
+                        <div className="flex items-center gap-2 mb-1">
+                            <AlertTriangle size={16} className="text-red-400" />
+                            <p className="text-red-400 text-sm font-medium">Expired Today</p>
+                        </div>
+                        <p className="text-3xl font-bold">{expiredTodayCount}</p>
                     </div>
                 </div>
 
                 <div className="grid lg:grid-cols-3 gap-12">
                     <div className="lg:col-span-3 space-y-12">
                         {/* Payment Issues Alert */}
-                        <PaymentIssuesPanel graceSubscriptions={graceSubscriptions} />
+                        {graceSubscriptions.length > 0 && (
+                            <PaymentIssuesPanel graceSubscriptions={graceSubscriptions} />
+                        )}
 
                         {/* Product Management */}
                         <ProductList products={products} />
 
-                        {/* Subscriptions Table */}
-                        <div className="bg-slate-900/30 border border-slate-800 rounded-3xl overflow-hidden">
-                            <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
-                                <div className="flex items-center gap-2">
-                                    <Activity className="text-blue-500" />
-                                    <h2 className="text-xl font-bold">Active Subscriptions</h2>
-                                </div>
-                            </div>
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-left">
-                                    <thead>
-                                        <tr className="text-slate-500 text-sm bg-slate-950/50">
-                                            <th className="px-6 py-4">User Email</th>
-                                            <th className="px-6 py-4">Plan</th>
-                                            <th className="px-6 py-4">Status</th>
-                                            <th className="px-6 py-4 text-right">Expiration</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-800">
-                                        {subscriptions.length === 0 ? (
-                                            <tr>
-                                                <td colSpan={4} className="px-6 py-12 text-center text-slate-500">No subscriptions found.</td>
-                                            </tr>
-                                        ) : (
-                                            subscriptions.map((sub: any) => (
-                                                <tr key={sub.id} className="hover:bg-slate-800/20 transition-colors">
-                                                    <td className="px-6 py-4 font-medium">{sub.profiles?.email}</td>
-                                                    <td className="px-6 py-4">
-                                                        <span className="px-2 py-1 bg-blue-500/10 text-blue-400 rounded text-xs font-bold">
-                                                            {sub.plans?.name}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        <span className={`px-2 py-1 rounded text-xs font-bold ${sub.status === 'active' && new Date(sub.current_period_end) > new Date() ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
-                                                            {sub.status?.toUpperCase()}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4 text-right text-slate-500 text-sm">
-                                                        {new Date(sub.current_period_end).toLocaleDateString()}
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        {/* Subscription Manager with Filters */}
+                        <SubscriptionManager
+                            subscriptions={filteredSubscriptions}
+                            currentFilter={filter}
+                        />
 
                         {/* Recent Purchases Table */}
                         <div className="bg-slate-900/30 border border-slate-800 rounded-3xl overflow-hidden">

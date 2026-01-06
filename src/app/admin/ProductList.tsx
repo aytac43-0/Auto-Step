@@ -11,7 +11,8 @@ import {
     ShieldCheck,
     Cpu,
     Database,
-    Activity
+    Activity,
+    Server
 } from "lucide-react";
 
 export function ProductList({ initialProducts }: { initialProducts: any[] }) {
@@ -49,9 +50,9 @@ export function ProductList({ initialProducts }: { initialProducts: any[] }) {
     };
 
     if (loading) return (
-        <div className="py-40 text-center flex flex-col items-center justify-center gap-6 animate-pulse">
-            <Loader2 className="animate-spin text-[#00E5FF]" size={40} />
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#00E5FF]">Accessing Database Nodes...</p>
+        <div className="py-40 text-center flex flex-col items-center justify-center gap-6">
+            <Loader2 className="animate-spin text-cyan-400/40" size={40} />
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500">Connecting to Repository...</p>
         </div>
     );
 
@@ -59,84 +60,81 @@ export function ProductList({ initialProducts }: { initialProducts: any[] }) {
         <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
                 <thead>
-                    <tr className="border-b border-[rgba(0,229,255,0.1)]">
-                        <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#94A3B8]">Deployable Module</th>
-                        <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#94A3B8]">System Code</th>
-                        <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#94A3B8]">Deployment Gateway</th>
-                        <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#E6F1FF] text-right">Metrics</th>
+                    <tr className="border-b border-white/5">
+                        <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">System Name</th>
+                        <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Module Code</th>
+                        <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Target URL</th>
+                        <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 text-right">Integrity</th>
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-[rgba(255,255,255,0.03)]">
+                <tbody className="divide-y divide-white/[0.02]">
                     {products.map((product) => (
-                        <tr key={product.id} className="group hover:bg-[rgba(0,229,255,0.02)] transition-colors">
+                        <tr key={product.id} className="group hover:bg-white/[0.01] transition-colors">
                             <td className="px-8 py-8">
-                                <div className="flex items-center gap-5">
-                                    <div className="w-12 h-12 rounded-2xl bg-[#070B14] border border-[rgba(0,229,255,0.1)] flex items-center justify-center text-[#00E5FF] group-hover:border-[#00E5FF]/40 transition-all shadow-[inset_0_0_15px_rgba(0,229,255,0.05)]">
-                                        <Cpu size={24} />
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-cyan-400 group-hover:border-cyan-400/20 transition-all">
+                                        <Server size={20} />
                                     </div>
                                     <div>
-                                        <p className="text-white font-black uppercase tracking-tight text-base group-hover:text-[#00E5FF] transition-colors">{product.name}</p>
-                                        <p className="text-[10px] text-[#94A3B8] font-bold tracking-widest mt-1">VAL: ${product.price} USD</p>
+                                        <p className="text-white font-bold text-sm leading-none mb-1">{product.name}</p>
+                                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Asset Value: ${product.price}</p>
                                     </div>
                                 </div>
                             </td>
                             <td className="px-8 py-8">
-                                <code className="text-[11px] font-mono font-bold text-[#00E5FF]/70 bg-[#00E5FF]/5 px-3 py-1.5 rounded-lg border border-[#00E5FF]/10 flex items-center gap-2 w-fit">
-                                    <Database size={12} />
+                                <code className="text-[10px] font-mono font-bold text-gray-400 bg-white/5 px-2 py-1 rounded border border-white/5">
                                     {product.id.split('-')[0].toUpperCase()}
                                 </code>
                             </td>
                             <td className="px-8 py-8">
                                 {editingId === product.id ? (
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-2">
                                         <input
                                             type="text"
                                             value={editUrl}
                                             onChange={(e) => setEditUrl(e.target.value)}
-                                            className="bg-[#070B14] border border-[#00E5FF] rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00E5FF]/20 outline-none w-64"
+                                            className="bg-[#0D121F] border border-[#1F2937] rounded-lg px-3 py-1.5 text-xs text-white focus:border-cyan-400/50 outline-none w-48"
                                             placeholder="https://..."
                                         />
                                         <button
                                             onClick={() => handleUpdateUrl(product.id)}
                                             disabled={updating}
-                                            className="p-2 bg-emerald-500/20 text-emerald-500 rounded-lg hover:bg-emerald-500/30 transition-all"
+                                            className="p-1.5 bg-emerald-500/10 text-emerald-500 rounded-lg hover:bg-emerald-500/20 transition-all"
                                         >
-                                            {updating ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+                                            {updating ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
                                         </button>
                                         <button
                                             onClick={() => setEditingId(null)}
-                                            className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500/30 transition-all"
+                                            className="p-1.5 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-all"
                                         >
-                                            <X size={16} />
+                                            <X size={14} />
                                         </button>
                                     </div>
                                 ) : (
-                                    <div className="flex items-center gap-4 group/url">
-                                        <div className="flex items-center gap-2 text-xs font-bold text-[#94A3B8] max-w-[200px] truncate">
-                                            <Globe size={14} className="text-[#00E5FF]/40" />
-                                            {product.access_url || 'N/A'}
+                                    <div className="flex items-center gap-3 group/url max-w-[200px]">
+                                        <div className="text-xs font-semibold text-gray-500 truncate italic">
+                                            {product.access_url || 'No URL assigned'}
                                         </div>
                                         <button
                                             onClick={() => {
                                                 setEditingId(product.id);
                                                 setEditUrl(product.access_url || '');
                                             }}
-                                            className="p-1.5 glass-panel border-[rgba(0,229,255,0.1)] text-[#94A3B8] hover:text-[#00E5FF] transition-all opacity-0 group-hover/url:opacity-100"
+                                            className="p-1 rounded bg-white/5 text-gray-600 hover:text-cyan-400 transition-all opacity-0 group-hover/url:opacity-100"
                                         >
-                                            <Edit2 size={12} />
+                                            <Edit2 size={10} />
                                         </button>
                                     </div>
                                 )}
                             </td>
                             <td className="px-8 py-8 text-right">
-                                <div className="flex flex-col items-end gap-2">
-                                    <div className="flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase tracking-widest">
-                                        <ShieldCheck size={14} />
-                                        Verified System
+                                <div className="flex flex-col items-end gap-1">
+                                    <div className="flex items-center gap-1.5 text-emerald-500 text-[9px] font-bold uppercase tracking-widest">
+                                        <ShieldCheck size={12} />
+                                        Verified
                                     </div>
-                                    <div className="flex items-center gap-2 text-[#94A3B8] text-[9px] font-black uppercase tracking-widest">
-                                        <Activity size={12} />
-                                        Performance: Optimal
+                                    <div className="text-[9px] font-bold text-gray-600 uppercase tracking-tighter">
+                                        Stability: High
                                     </div>
                                 </div>
                             </td>

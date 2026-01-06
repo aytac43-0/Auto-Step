@@ -3,119 +3,89 @@
 @tailwind utilities;
 
 :root {
-  --background: #070B14;
-  --surface: #0A1020;
-  --primary: #00E5FF;
-  --primary-glow: rgba(0, 229, 255, 0.4);
-  --secondary: #3B82F6;
-  --text-primary: #E6F1FF;
-  --text-muted: #94A3B8;
-  --border: rgba(0, 229, 255, 0.15);
+  --background: #0A0F1A;
+  --surface: #111827;
+  --primary: #22D3EE;
+  --text-primary: #F3F4F6;
+  --text-secondary: #9CA3AF;
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-active: rgba(34, 211, 238, 0.2);
 }
 
 body {
   background-color: var(--background);
   color: var(--text-primary);
   font-family: 'Inter', sans-serif;
-  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-tight {
+  font-family: 'Inter Tight', sans-serif;
+  letter-spacing: -0.02em;
 }
 
 @layer components {
   .glass-panel {
-    @apply backdrop-blur-xl rounded-[24px];
-    background-color: rgba(10, 16, 32, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  .neon-border {
-    border: 1px solid rgba(0, 229, 255, 0.2);
-    box-shadow: 0 0 15px rgba(0, 225, 255, 0.05);
-  }
-
-  .neon-glow-hover {
-    @apply transition-all duration-300;
-  }
-
-  .neon-glow-hover:hover {
-    box-shadow: 0 0 30px rgba(0, 229, 255, 0.15);
-    border-color: rgba(0, 229, 255, 0.4);
+    background-color: rgba(17, 24, 39, 0.4);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
   }
 
   .btn-primary {
-    @apply px-8 py-4 font-black uppercase tracking-[0.1em] rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98];
-    background-color: #00E5FF;
-    color: #070B14;
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+    @apply px-6 py-3 font-semibold transition-all duration-200 rounded-lg inline-flex items-center justify-center;
+    background-color: var(--primary);
+    color: #0A0F1A;
+  }
+
+  .btn-primary:hover {
+    @apply opacity-90 scale-[1.01];
   }
 
   .btn-secondary {
-    @apply px-8 py-4 bg-transparent font-black uppercase tracking-[0.1em] rounded-2xl transition-all duration-300;
-    border: 1px solid rgba(0, 229, 255, 0.3);
-    color: #00E5FF;
+    @apply px-6 py-3 font-semibold transition-all duration-200 rounded-lg inline-flex items-center justify-center;
+    background-color: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
   }
 
   .btn-secondary:hover {
-    background-color: rgba(0, 229, 255, 0.05);
-    border-color: #00E5FF;
+    background-color: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.1);
   }
 
-  .input-neon {
-    @apply w-full px-5 py-4 rounded-2xl outline-none transition-all duration-300;
-    background-color: #070B14;
-    border: 1px solid rgba(0, 229, 255, 0.15);
-    color: #E6F1FF;
+  .input-field {
+    @apply w-full px-4 py-3 bg-[#0D121F] border border-[#1F2937] rounded-lg outline-none transition-all duration-200 text-gray-100;
   }
 
-  .input-neon::placeholder {
-    color: rgba(148, 163, 184, 0.3);
-  }
-
-  .input-neon:focus {
-    border-color: #00E5FF;
-    box-shadow: 0 0 15px rgba(0, 229, 255, 0.1);
+  .input-field:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.1);
   }
 }
 
-/* Animations */
-@keyframes float {
-  0% {
-    transform: translateY(0px);
+/* Subtle transitions */
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
 
-  50% {
-    transform: translateY(-10px);
-  }
-
-  100% {
-    transform: translateY(0px);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@keyframes pulse-glow {
-  0% {
-    opacity: 0.4;
-  }
-
-  50% {
-    opacity: 0.8;
-  }
-
-  100% {
-    opacity: 0.4;
-  }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 4s ease-in-out infinite;
-}
-
-/* Grid Background */
-.grid-bg {
-  background-image: linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
-  background-size: 50px 50px;
+.grid-subtle {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
 }

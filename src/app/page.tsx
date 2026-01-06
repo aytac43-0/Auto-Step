@@ -1,111 +1,100 @@
-import Image from "next/image";
-import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
-import { ArrowRight, Bot, Cpu, Zap, Activity } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, CheckCircle2, Shield, Zap, LayoutDashboard } from "lucide-react";
 
 export default async function Home() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col overflow-hidden">
-      {/* Hero Section */}
-      <nav className="relative z-50 w-full px-6 py-8">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-[#00E5FF] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(0,229,255,0.4)] group-hover:scale-110 transition-transform">
-              <Zap size={22} className="text-[#070B14] fill-current" />
+    <div className="relative flex flex-col items-center">
+      {/* Navigation */}
+      <nav className="fixed top-0 w-full z-[100] border-b border-white/5 bg-[#0A0F1A]/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-8 h-8 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-cyan-400 group-hover:border-cyan-400/30 transition-all">
+              <Shield size={18} />
             </div>
-            <span className="text-2xl font-[900] tracking-tighter text-[#E6F1FF] uppercase font-space">AUTO STEP</span>
-          </div>
+            <span className="text-lg font-bold tracking-tight text-white uppercase font-sans">AUTO STEP</span>
+          </Link>
 
           <div className="flex items-center gap-8">
-            <Link href="/products" className="hidden md:block text-sm font-bold uppercase tracking-widest text-[#94A3B8] hover:text-[#00E5FF] transition-colors">
-              Marketplace
+            <Link href="/products" className="text-sm font-semibold text-gray-400 hover:text-white transition-colors">Catalog</Link>
+            <div className="w-px h-4 bg-white/10 hidden sm:block" />
+            <Link href={user ? "/dashboard" : "/login"} className="text-sm font-bold text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-widest">
+              {user ? "Dashboard" : "Partner Access"}
             </Link>
-            {user ? (
-              <Link href="/dashboard" className="btn-secondary px-6 py-2 !rounded-xl text-xs">
-                Go to Dashboard
-              </Link>
-            ) : (
-              <div className="flex items-center gap-4">
-                <Link href="/login" className="text-sm font-bold uppercase tracking-widest text-[#94A3B8] hover:text-[#E6F1FF] transition-colors">
-                  Login
-                </Link>
-                <Link href="/register" className="btn-primary px-6 py-2 !rounded-xl text-xs">
-                  Get Access
-                </Link>
-              </div>
-            )}
           </div>
         </div>
       </nav>
-
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 pt-20 pb-40">
-        <div className="text-center max-w-5xl mx-auto">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border-[rgba(0,229,255,0.2)] mb-8 animate-float">
-            <div className="w-2 h-2 rounded-full bg-[#00E5FF] animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#00E5FF]">v2.0 Active Marketplace</span>
-          </div>
-
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-8 leading-[0.9] tracking-tighter font-space uppercase">
-            <span className="block text-white">Automate.</span>
-            <span className="block text-[#00E5FF] drop-shadow-[0_0_30px_rgba(0,229,255,0.3)]">Innovate.</span>
-            <span className="block text-white">Dominate.</span>
-          </h1>
-
-          <p className="text-[#94A3B8] text-lg md:text-xl max-w-2xl mx-auto mb-12 font-medium leading-relaxed">
-            The elite marketplace for production-ready automation assets. <br className="hidden md:block" />
-            Acquire, deploy, and scale with futuristic precision.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Link href="/products" className="btn-primary group w-full sm:w-auto">
-              Browse Automations
-              <ArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link href={user ? "/dashboard" : "/login"} className="btn-secondary w-full sm:w-auto">
-              {user ? "Personal Console" : "Identify Account"}
-            </Link>
-          </div>
+      {/* Hero Section */}
+      <section className="w-full max-w-7xl px-6 pt-32 pb-24 md:pt-48 md:pb-40 text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/5 border border-blue-500/10 text-cyan-400 text-xs font-semibold mb-8 fade-in">
+          <Shield size={14} />
+          Professional Business Automation
         </div>
 
-        {/* Floating Decorative Elements */}
-        <div className="absolute top-[30%] left-[5%] animate-float opacity-20 hidden lg:block" style={{ animationDelay: '1s' }}>
-          <div className="glass-panel p-6 neon-border w-64 rotate-[-6deg]">
-            <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center mb-4">
-              <Cpu className="text-blue-500" />
+        <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 max-w-4xl mx-auto leading-[1.1] text-white">
+          Architecting systems for <br className="hidden md:block" />
+          <span className="text-gray-400">scalable productivity.</span>
+        </h1>
+
+        <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
+          Auto Step is a professional automation studio that builds and delivers production-ready systems for modern enterprises.
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link href="/products" className="btn-primary px-8 py-4 w-full sm:w-auto">
+            View System Catalog
+          </Link>
+          <Link href={user ? "/dashboard" : "/login"} className="btn-secondary px-8 py-4 w-full sm:w-auto">
+            {user ? "Client Dashboard" : "Partner Login"}
+          </Link>
+        </div>
+      </section>
+
+      {/* Trust Marks */}
+      <section className="w-full border-y border-white/5 bg-white/[0.01] py-12">
+        <div className="max-w-7xl mx-auto px-6 flex flex-wrap justify-around gap-8 items-center opacity-40 grayscale">
+          <span className="text-xl font-bold tracking-tighter">ENTERPRISE</span>
+          <span className="text-xl font-bold tracking-tighter">EFFICIENCY</span>
+          <span className="text-xl font-bold tracking-tighter">STABILITY</span>
+          <span className="text-xl font-bold tracking-tighter">PRECISION</span>
+        </div>
+      </section>
+
+      {/* Feature Section */}
+      <section className="w-full max-w-7xl px-6 py-32">
+        <div className="grid md:grid-cols-3 gap-12">
+          <div className="space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
+              <CheckCircle2 size={24} />
             </div>
-            <div className="h-2 w-full bg-blue-500/10 rounded-full mb-2" />
-            <div className="h-2 w-2/3 bg-blue-500/10 rounded-full" />
+            <h3 className="text-xl font-bold text-white">Bespoke Architecture</h3>
+            <p className="text-gray-400 leading-relaxed text-sm">
+              We design custom vertical systems tailored specifically to your existing business workflows and KPIs.
+            </p>
+          </div>
+          <div className="space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
+              <Zap size={24} />
+            </div>
+            <h3 className="text-xl font-bold text-white">Rapid Deployment</h3>
+            <p className="text-gray-400 leading-relaxed text-sm">
+              Our pre-vetted module library allows us to deploy stable automation environments in days, not months.
+            </p>
+          </div>
+          <div className="space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
+              <LayoutDashboard size={24} />
+            </div>
+            <h3 className="text-xl font-bold text-white">Managed Scaling</h3>
+            <p className="text-gray-400 leading-relaxed text-sm">
+              Systems built by our studio are designed to scale with your transaction volume without human intervention.
+            </p>
           </div>
         </div>
-
-        <div className="absolute bottom-[20%] right-[8%] animate-float opacity-30 hidden lg:block" style={{ animationDelay: '2.5s' }}>
-          <div className="glass-panel p-6 neon-border w-72 rotate-[4deg]">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center">
-                <Activity size={16} className="text-cyan-500" />
-              </div>
-              <div className="h-3 w-32 bg-cyan-500/10 rounded-full" />
-            </div>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <div className="h-2 w-16 bg-white/5 rounded-full" />
-                <div className="h-2 w-8 bg-[#00E5FF]/20 rounded-full" />
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="h-2 w-20 bg-white/5 rounded-full" />
-                <div className="h-2 w-12 bg-[#00E5FF]/20 rounded-full" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-
-      {/* Footer Glow Background */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-gradient-to-t from-[#00E5FF]/10 to-transparent pointer-events-none" />
+      </section>
     </div>
   );
 }

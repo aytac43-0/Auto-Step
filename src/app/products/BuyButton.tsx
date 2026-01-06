@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { getPaytrToken } from './paytr-actions'
-import { Loader2, ShoppingCart, ShieldCheck } from 'lucide-react'
+import { Loader2, Briefcase, ChevronRight } from 'lucide-react'
 
 export function BuyButton({ productId, productName, price, isLoggedIn }: { productId: string, productName: string, price: number, isLoggedIn: boolean }) {
     const [loading, setLoading] = useState(false)
@@ -39,7 +39,7 @@ export function BuyButton({ productId, productName, price, isLoggedIn }: { produ
                 setError(result.error || 'Gateway initialization failed')
             }
         } catch (err) {
-            setError('System link error occurred')
+            setError('Studio connection error occurred')
         } finally {
             setLoading(false)
         }
@@ -50,12 +50,13 @@ export function BuyButton({ productId, productName, price, isLoggedIn }: { produ
             <button
                 onClick={handlePurchase}
                 disabled={loading}
-                className="w-full btn-primary !py-4 flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(0,229,255,0.2)]"
+                className="w-full btn-primary !py-4 flex items-center justify-center gap-3"
             >
-                {loading ? <Loader2 size={20} className="animate-spin" /> : <ShieldCheck size={20} />}
-                {loading ? 'Processing...' : 'Authorize Acquisition'}
+                {loading ? <Loader2 size={18} className="animate-spin text-gray-900" /> : <Briefcase size={18} />}
+                {loading ? 'Initializing...' : 'Acquire System Module'}
+                {!loading && <ChevronRight size={16} className="opacity-40" />}
             </button>
-            {error && <p className="text-red-500 text-[10px] font-black uppercase tracking-widest mt-4 text-center bg-red-500/5 p-3 rounded-lg border border-red-500/20">{error}</p>}
+            {error && <p className="text-red-400 text-[10px] font-bold uppercase tracking-widest mt-4 text-center bg-red-500/5 p-3 rounded-lg border border-red-500/10 italic">{error}</p>}
         </div>
     )
 }

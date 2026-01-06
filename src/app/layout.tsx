@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
 
-const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: '--font-space' });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const interTight = Inter_Tight({ subsets: ["latin"], variable: "--font-inter-tight" });
 
 export const metadata: Metadata = {
-  title: "Auto Step | Premium Automation Marketplace",
-  description: "Automate. Innovate. Dominate. The elite marketplace for production-ready automation assets.",
+  title: "Auto Step | Professional Automation Studio",
+  description: "Bespoke automation systems for scalable business operations.",
 };
 
 export default function RootLayout({
@@ -18,13 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans bg-[#070B14] min-h-screen flex flex-col`}>
-        {/* Persistent Grid Overlay */}
-        <div className="fixed inset-0 grid-bg pointer-events-none opacity-40 z-0" />
-
-        {/* Ambient Glows */}
-        <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#00E5FF]/5 blur-[120px] pointer-events-none z-0" />
-        <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/5 blur-[120px] pointer-events-none z-0" />
+      <body className={`${inter.variable} ${interTight.variable} font-sans bg-[#0A0F1A] text-gray-100 min-h-screen flex flex-col`}>
+        {/* Subtle Background Elements */}
+        <div className="fixed inset-0 grid-subtle pointer-events-none z-0" />
+        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-blue-900/5 to-transparent pointer-events-none z-0" />
 
         <div className="relative z-10 flex flex-col min-h-screen">
           {children}

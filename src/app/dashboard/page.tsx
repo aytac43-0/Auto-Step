@@ -1,5 +1,8 @@
-import { getCurrentProfile } from "@/lib/getCurrentProfile";
-import { redirect } from "next/navigation";
+'use client';
+
+import { createClient } from "@/utils/supabase/client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AutomationsList } from "./AutomationsList";
 import Link from "next/link";
 import {
@@ -11,13 +14,49 @@ import {
     Search,
     UserCircle,
     ShoppingBag,
-    ShieldAlert
+    ShieldAlert,
+    Loader2
 } from "lucide-react";
 
-export default async function DashboardPage() {
-    const profile = await getCurrentProfile();
+export default function DashboardPage() {
+    const supabase = createClient();
+    const router = useRouter();
+    const [profile, setProfile] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
 
-    if (!profile) return redirect("/login");
+    useEffect(() => {
+        async function fetchProfile() {
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (!user) {
+                router.replace("/login");
+                return;
+            }
+
+            const { data } = await supabase
+                .from("profiles")
+                .select("*")
+                .eq("user_id", user.id)
+                .single();
+
+            if (data) {
+                setProfile(data);
+            }
+            setLoading(false);
+        }
+
+        fetchProfile();
+    }, [supabase, router]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="animate-spin text-cyan-400/40" size={48} />
+            </div>
+        );
+    }
+
+    if (!profile) return null;
 
     const username = profile.username || 'User';
 

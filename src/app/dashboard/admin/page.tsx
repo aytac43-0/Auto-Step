@@ -1,4 +1,5 @@
 import { getCurrentProfile } from "@/lib/getCurrentProfile";
+import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ProductList } from "./ProductList";
@@ -16,6 +17,7 @@ import {
 } from "lucide-react";
 
 export default async function AdminPage() {
+    const supabase = createClient();
     const profile = await getCurrentProfile();
 
     if (!profile || profile.role !== "admin") {

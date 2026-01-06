@@ -103,7 +103,7 @@ export default async function DashboardPage() {
                         </div>
                     </div>
 
-                    <AutomationsList userId={user.id} />
+                    <AutomationsList userId={profile.user_id} />
                 </div>
 
                 {/* Marketplace Invitation */}

@@ -40,7 +40,7 @@ export default async function DashboardPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
+        <div className="min-h-screen flex flex-col">
             <nav className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
                     <Link href="/dashboard" className="flex items-center gap-2 group transition-all">
@@ -50,14 +50,14 @@ export default async function DashboardPage() {
                     <div className="flex items-center gap-4">
                         <Link
                             href="/account"
-                            className="px-4 py-2 text-slate-300 hover:text-white transition-colors"
+                            className="px-4 py-2 text-slate-300 hover:text-white transition-colors text-sm font-medium"
                         >
                             Account
                         </Link>
                         {profile?.role === "admin" && (
                             <Link
                                 href="/admin"
-                                className="px-4 py-2 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 rounded-lg transition-colors"
+                                className="px-4 py-2 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 rounded-lg transition-colors text-sm font-medium"
                             >
                                 Admin Panel
                             </Link>
@@ -65,7 +65,7 @@ export default async function DashboardPage() {
                         <form action={logout}>
                             <button
                                 type="submit"
-                                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-colors"
+                                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors"
                             >
                                 Logout
                             </button>
@@ -74,26 +74,35 @@ export default async function DashboardPage() {
                 </div>
             </nav>
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="mb-12">
-                    <h1 className="text-4xl font-bold mb-2">Hello, {profile?.username || 'User'}!</h1>
-                    <p className="text-slate-400">Welcome back to your automation hub.</p>
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+                    <div>
+                        <h1 className="text-4xl font-bold mb-2 text-slate-100">Hello, {profile?.username || 'User'}!</h1>
+                        <p className="text-slate-400">Welcome back to your automation hub.</p>
+                    </div>
+
+                    <Link
+                        href="/products"
+                        className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all hover:scale-105 shadow-lg shadow-blue-500/20"
+                    >
+                        Browse Products
+                    </Link>
                 </div>
 
                 {/* Metrics Grid */}
                 <div className="grid md:grid-cols-2 gap-6 mb-12">
-                    <div className="bg-slate-900/30 border border-slate-800 p-8 rounded-3xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-8 opacity-10">
+                    <div className="bg-slate-900/30 border border-slate-800 p-8 rounded-3xl relative overflow-hidden group hover:border-slate-700 transition-colors">
+                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
                             <Zap size={120} className="text-blue-500" />
                         </div>
                         <p className="text-slate-500 text-sm font-medium mb-1 flex items-center gap-2">
                             <Zap size={16} className="text-blue-500" />
-                            Total Automations
+                            Active Automations
                         </p>
                         <p className="text-5xl font-bold">{metrics.total}</p>
                     </div>
-                    <div className="bg-slate-900/30 border border-slate-800 p-8 rounded-3xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-8 opacity-10">
+                    <div className="bg-slate-900/30 border border-slate-800 p-8 rounded-3xl relative overflow-hidden group hover:border-slate-700 transition-colors">
+                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
                             <Activity size={120} className="text-emerald-500" />
                         </div>
                         <p className="text-slate-500 text-sm font-medium mb-1 flex items-center gap-2">
@@ -104,16 +113,8 @@ export default async function DashboardPage() {
                     </div>
                 </div>
 
-                <div className="grid lg:grid-cols-3 gap-12">
-                    <div className="lg:col-span-2 space-y-12">
-                        <AutomationsList initialAutomations={automations} isAdmin={profile?.role === 'admin'} />
-                        <MyProducts purchases={purchases} />
-                        <SubscriptionCard subscription={subscription} plans={plans} />
-                    </div>
-                    <div className="space-y-12">
-                        <SubscriptionBadge subscription={subscription} />
-                        <UserSettings profile={profile} />
-                    </div>
+                <div className="max-w-4xl">
+                    <AutomationsList initialAutomations={automations} isAdmin={profile?.role === 'admin'} />
                 </div>
             </main>
         </div>

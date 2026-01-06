@@ -58,7 +58,7 @@ export function AutomationsList({ initialAutomations, isAdmin }: { initialAutoma
                 )}
             </div>
 
-            {isAdding && isAdmin && (
+            {isAdmin && isAdding && (
                 <form onSubmit={handleAdd} className="mb-8 p-4 bg-slate-950/50 rounded-2xl border border-slate-800 flex gap-4">
                     <input
                         name="name"
@@ -94,8 +94,8 @@ export function AutomationsList({ initialAutomations, isAdmin }: { initialAutoma
                     {automations.map((auto) => (
                         <div key={auto.id} className="flex items-center justify-between p-4 bg-slate-950/50 rounded-2xl border border-slate-800 hover:border-slate-700 transition-colors">
                             <div>
-                                <h3 className="font-medium">{auto.name}</h3>
-                                <p className="text-xs text-slate-500">Created {new Date(auto.created_at).toLocaleDateString()}</p>
+                                <h3 className="font-medium text-white">{auto.name}</h3>
+                                <p className="text-xs text-slate-500 italic">Created {new Date(auto.created_at).toLocaleDateString()}</p>
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${auto.status === 'active' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}`}>

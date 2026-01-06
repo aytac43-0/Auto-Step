@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
-import { BuyButton } from "./BuyButton";
+import { ProductSearch } from "./ProductSearch";
 import Link from "next/link";
-import { ArrowLeft, Tag } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 export default async function ProductsPage() {
     const supabase = createClient();
@@ -37,27 +37,12 @@ export default async function ProductsPage() {
                     <p className="text-slate-400 max-w-2xl mx-auto italic">Premium automation products designed to accelerate your workflow and scale your operations effortlessly.</p>
                 </div>
 
-                {!products || products.length === 0 ? (
+                {!products ? (
                     <div className="text-center py-20 bg-slate-900/20 border border-dashed border-slate-800 rounded-3xl">
                         <p className="text-slate-500">No products available at the moment. Please check back later.</p>
                     </div>
                 ) : (
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {products.map((product) => (
-                            <div key={product.id} className="bg-slate-900/30 border border-slate-800 p-8 rounded-3xl flex flex-col hover:border-blue-500/30 transition-all group">
-                                <div className="w-12 h-12 bg-blue-500/10 text-blue-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                                    <Tag size={24} />
-                                </div>
-                                <h3 className="text-2xl font-bold mb-2">{product.name}</h3>
-                                <p className="text-slate-400 text-sm mb-8 flex-1">{product.description}</p>
-                                <div className="flex items-baseline gap-1 mb-8">
-                                    <span className="text-4xl font-bold">${product.price}</span>
-                                    <span className="text-slate-500 text-sm italic">/ one-time</span>
-                                </div>
-                                <BuyButton productId={product.id} productName={product.name} price={product.price} isLoggedIn={!!user} />
-                            </div>
-                        ))}
-                    </div>
+                    <ProductSearch initialProducts={products} isLoggedIn={!!user} />
                 )}
             </main>
         </div>

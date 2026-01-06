@@ -22,10 +22,11 @@ export default function DashboardPage() {
     const supabase = createClient();
     const router = useRouter();
     const [profile, setProfile] = useState<any>(null);
+    const [automations, setAutomations] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        async function fetchProfile() {
+        async function fetchData() {
             const { data: { user } } = await supabase.auth.getUser();
 
             if (!user) {
@@ -33,19 +34,33 @@ export default function DashboardPage() {
                 return;
             }
 
-            const { data } = await supabase
-                .from("profiles")
-                .select("*")
-                .eq("user_id", user.id)
-                .single();
+            // Fetch Profile and Automations in parallel
+            const [profileRes, automationsRes] = await Promise.all([
+                supabase
+                    .from("profiles")
+                    .select("*")
+                    .eq("user_id", user.id)
+                    .single(),
+                supabase
+                    .from("automations")
+                    .select(`
+                        *,
+                        products (name, access_url)
+                    `)
+                    .eq("user_id", user.id)
+            ]);
 
-            if (data) {
-                setProfile(data);
+            if (profileRes.data) {
+                setProfile(profileRes.data);
             }
+            if (automationsRes.data) {
+                setAutomations(automationsRes.data);
+            }
+
             setLoading(false);
         }
 
-        fetchProfile();
+        fetchData();
     }, [supabase, router]);
 
     if (loading) {
@@ -138,7 +153,7 @@ export default function DashboardPage() {
                         </div>
                     </div>
 
-                    <AutomationsList userId={profile.user_id} />
+                    <AutomationsList userId={profile.user_id} initialAutomations={automations} />
                 </div>
 
                 {/* Marketplace Invitation */}

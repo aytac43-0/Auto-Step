@@ -11,12 +11,18 @@ import {
     FileCode2
 } from "lucide-react";
 
-export function AutomationsList({ userId }: { userId: string }) {
+export function AutomationsList({ userId, initialAutomations }: { userId: string, initialAutomations?: any[] }) {
     const supabase = createClient();
-    const [automations, setAutomations] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [automations, setAutomations] = useState<any[]>(initialAutomations || []);
+    const [loading, setLoading] = useState(!initialAutomations);
 
     useEffect(() => {
+        if (initialAutomations) {
+            setAutomations(initialAutomations);
+            setLoading(false);
+            return;
+        }
+
         async function fetchMyAutomations() {
             const { data } = await supabase
                 .from("automations")
@@ -30,7 +36,7 @@ export function AutomationsList({ userId }: { userId: string }) {
             setLoading(false);
         }
         fetchMyAutomations();
-    }, [userId]);
+    }, [userId, initialAutomations]);
 
     if (loading) return (
         <div className="py-24 flex flex-col items-center justify-center gap-4">

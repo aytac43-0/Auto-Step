@@ -59,7 +59,7 @@ export default function AccountPage() {
                         <User size={32} />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold text-white mb-1 font-tight">Partner Identity</h1>
+                        <h1 className="text-3xl font-bold text-white mb-1 font-tight">User Identity</h1>
                         <p className="text-gray-400 text-sm font-medium">Verified System UID: {user.id.split('-')[0].toUpperCase()}</p>
                     </div>
                 </div>
@@ -88,10 +88,10 @@ export default function AccountPage() {
                                 </div>
 
                                 <div className="group">
-                                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Access Role</p>
+                                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Access Level</p>
                                     <div className="flex items-center gap-3">
                                         <ShieldCheck size={16} className="text-emerald-500" />
-                                        <p className="text-lg font-bold text-white uppercase tracking-tight font-tight italic">{profile?.role || 'Partner'}</p>
+                                        <p className="text-lg font-bold text-white uppercase tracking-tight font-tight italic">{profile?.role || 'User'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -137,7 +137,7 @@ export default function AccountPage() {
                         <div className="mt-auto pt-10 border-t border-white/5 w-full">
                             <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                                 <ShieldCheck size={12} className="text-emerald-500" />
-                                Official Studio Partner
+                                Verified System User
                             </div>
                         </div>
                     </div>

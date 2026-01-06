@@ -33,7 +33,7 @@ export default function RegisterPage({
                             <ShieldCheck size={20} />
                         </div>
                     </Link>
-                    <h1 className="text-3xl font-bold text-white mb-3 font-tight">Partner Registration</h1>
+                    <h1 className="text-3xl font-bold text-white mb-3 font-tight">User Registration</h1>
                     <p className="text-gray-400">Establish your automation presence.</p>
                 </div>
 
@@ -146,14 +146,14 @@ export default function RegisterPage({
 
                         <div className="pt-2">
                             <button type="submit" className="btn-primary w-full py-4 tracking-wide">
-                                Create Partner Account
+                                Create User Account
                             </button>
                         </div>
                     </form>
                 </div>
 
                 <p className="mt-8 text-center text-sm text-gray-400">
-                    Already an established partner?{" "}
+                    Already a registered user?{" "}
                     <Link href="/login" className="text-white font-semibold hover:text-cyan-400 transition-colors">
                         Sign In
                     </Link>

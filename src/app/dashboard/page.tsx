@@ -26,7 +26,7 @@ export default async function DashboardPage() {
         .eq("user_id", user.id)
         .single();
 
-    const username = profile?.username || 'Partner';
+    const username = profile?.username || 'User';
 
     return (
         <div className="min-h-screen flex flex-col pt-20">
@@ -61,7 +61,7 @@ export default async function DashboardPage() {
                         <h1 className="text-4xl font-bold text-white mb-2 leading-tight font-tight tracking-tight">
                             Hello, <span className="text-cyan-400">{username}</span>
                         </h1>
-                        <p className="text-gray-400 max-w-lg font-medium">Manage and monitor the automation modules currently active within your business environment.</p>
+                        <p className="text-gray-400 max-w-lg font-medium">Manage and monitor the automation modules currently active within your environment.</p>
                     </div>
                     <Link href="/products" className="btn-primary flex items-center gap-2 px-8">
                         <Plus size={20} />
@@ -92,9 +92,9 @@ export default async function DashboardPage() {
                     </div>
                     <div className="bg-[#111827] border border-white/5 p-8 rounded-2xl relative overflow-hidden group hover:border-white/10 transition-all">
                         <div className="relative z-10">
-                            <p className="text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-4">Partner Tier</p>
+                            <p className="text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-4">Access Tier</p>
                             <h3 className="text-3xl font-bold text-white mb-1 tracking-tight italic">Standard</h3>
-                            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Verified Enterprise</p>
+                            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Verified User</p>
                         </div>
                         <ShieldCheck className="absolute right-[-10px] bottom-[-10px] text-white/5 scale-150 group-hover:text-cyan-400/10 transition-colors" size={100} />
                     </div>

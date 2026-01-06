@@ -29,7 +29,7 @@ export default async function Home() {
             View System Catalog
           </Link>
           <Link href={user ? "/dashboard" : "/login"} className="btn-secondary px-10 py-4 w-full sm:w-auto">
-            {user ? "Client Dashboard" : "Partner Login"}
+            {user ? "Client Dashboard" : "User Login"}
           </Link>
         </div>
       </section>

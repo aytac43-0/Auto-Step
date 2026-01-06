@@ -38,7 +38,7 @@ export default async function AdminPage() {
     ]);
 
     const stats = [
-        { label: "Active Partners", value: usersCount.count || 0, icon: <Users size={20} />, trend: "+2" },
+        { label: "Active Users", value: usersCount.count || 0, icon: <Users size={20} />, trend: "+2" },
         { label: "Module Inventory", value: productsCount.count || 0, icon: <Layout size={20} />, trend: "Stable" },
         { label: "Acquisition Vol", value: `$${((salesCount.count || 0) * 49).toLocaleString()}`, icon: <TrendingUp size={20} />, trend: "+4%" },
         { label: "Active Nodes", value: instancesCount.count || 0, icon: <Activity size={20} />, trend: "99.9%" },

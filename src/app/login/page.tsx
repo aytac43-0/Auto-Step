@@ -21,7 +21,7 @@ export default function LoginPage({
                             <ShieldCheck size={20} />
                         </div>
                     </Link>
-                    <h1 className="text-3xl font-bold text-white mb-3 font-tight">Partner Login</h1>
+                    <h1 className="text-3xl font-bold text-white mb-3 font-tight">User Login</h1>
                     <p className="text-gray-400">Access your automation dashboard.</p>
                 </div>
 
@@ -88,9 +88,9 @@ export default function LoginPage({
                 </div>
 
                 <p className="mt-8 text-center text-sm text-gray-400">
-                    Interested in system partnership?{" "}
+                    Interested in system access?{" "}
                     <Link href="/register" className="text-white font-semibold hover:text-cyan-400 transition-colors">
-                        Register Account
+                        Create Account
                     </Link>
                 </p>
             </div>

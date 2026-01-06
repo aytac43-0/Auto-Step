@@ -32,7 +32,7 @@ export function UserNav({
             <div className="flex items-center gap-6">
                 <Link href="/products" className="text-sm font-semibold text-gray-400 hover:text-white transition-colors">Catalog</Link>
                 <Link href="/login" className="text-sm font-bold text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-widest">
-                    Partner Access
+                    Sign In
                 </Link>
             </div>
         );
@@ -63,13 +63,13 @@ export function UserNav({
                 <Link href="/account" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
                     <UserCircle size={20} />
                     <span className="text-xs font-bold uppercase tracking-wider hidden sm:inline">
-                        {profile?.username || 'Partner'}
+                        {profile?.username || 'User'}
                     </span>
                 </Link>
                 <button
                     onClick={handleLogout}
                     className="p-2 text-gray-500 hover:text-red-400 transition-colors"
-                    title="Logout"
+                    title="Sign Out"
                 >
                     <LogOut size={18} />
                 </button>

@@ -101,7 +101,7 @@ export async function updateSession(request: NextRequest) {
         }
 
         // 4. Admin protection (Strictly DB-only role check)
-        if (pathname.startsWith("/admin")) {
+        if (pathname === "/admin" || pathname.startsWith("/dashboard/admin")) {
             const { data: profile } = await supabase
                 .from("profiles")
                 .select("role")

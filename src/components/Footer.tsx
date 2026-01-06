@@ -16,6 +16,10 @@ export function Footer() {
                         <p className="text-gray-400 text-sm leading-relaxed max-w-sm mb-10 font-medium">
                             A professional automation studio developing high-performance architectural solutions for modern enterprises.
                         </p>
+                        <div className="flex items-center gap-2 text-emerald-500 text-[10px] font-bold uppercase tracking-widest mt-2">
+                            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                            Verified System User
+                        </div>
                         <div className="flex items-center gap-4 text-emerald-500/60">
                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                             <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Studio Status: Operational</span>

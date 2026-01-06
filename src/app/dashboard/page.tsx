@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { logout } from "../auth/actions";
 import Link from "next/link";
 import { AutomationsList } from "./AutomationsList";
-import { Activity, Zap, Shield, LogOut, User, ShoppingBag, Search } from "lucide-react";
+import { Activity, Zap, Shield, LogOut, User, ShoppingBag, Search, ArrowRight } from "lucide-react";
 
 export default async function DashboardPage() {
     const supabase = createClient();

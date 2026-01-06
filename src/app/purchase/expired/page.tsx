@@ -1,34 +1,46 @@
-import Link from "next/link";
-import { AlertTriangle, CreditCard, ArrowRight } from "lucide-react";
+import Link from 'next/link'
+import { AlertTriangle } from 'lucide-react'
 
-export default function SubscriptionExpiredPage() {
+export default function ExpiredPage() {
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center px-4">
-            <div className="w-full max-w-md bg-slate-900/50 p-10 rounded-3xl border border-slate-800 backdrop-blur-sm text-center">
-                <div className="w-20 h-20 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-8">
-                    <AlertTriangle size={40} />
+        <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center px-4">
+            <div className="max-w-md w-full text-center">
+                <div className="mb-6 flex justify-center">
+                    <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-full">
+                        <AlertTriangle className="text-red-500" size={48} />
+                    </div>
                 </div>
-                <h1 className="text-4xl font-bold mb-4">Subscription Expired</h1>
-                <p className="text-slate-400 mb-10 leading-relaxed text-lg">
-                    Your access to premium features has been suspended. Please renew your subscription to continue using Auto Step.
+
+                <h1 className="text-3xl font-bold mb-4">Subscription Required</h1>
+
+                <p className="text-slate-400 mb-8">
+                    Your subscription has expired or you don't have an active subscription.
+                    Please renew or purchase a subscription to access this feature.
                 </p>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
                     <Link
                         href="/products"
-                        className="flex items-center justify-center gap-2 w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-slate-200 transition-all text-lg"
+                        className="block w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-colors"
                     >
-                        Renew Now
-                        <CreditCard size={20} />
+                        View Plans & Pricing
                     </Link>
+
                     <Link
                         href="/dashboard"
-                        className="block text-slate-500 hover:text-white transition-colors text-sm"
+                        className="block w-full py-4 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-xl transition-colors"
                     >
-                        Access Settings
+                        Back to Dashboard
                     </Link>
                 </div>
+
+                <p className="mt-8 text-sm text-slate-500">
+                    Need help? Contact{' '}
+                    <a href="mailto:support@autostep.app" className="text-blue-400 hover:underline">
+                        support@autostep.app
+                    </a>
+                </p>
             </div>
         </div>
-    );
+    )
 }

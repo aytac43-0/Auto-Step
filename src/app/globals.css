@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#020617] text-[#E5E7EB] antialiased selection:bg-blue-500/30;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+@layer components {
+  .premium-card {
+    @apply bg-[#0F172A] border border-[#1E293B] rounded-2xl shadow-xl shadow-black/20;
+  }
+  
+  .premium-surface {
+    @apply bg-[#0B1220] border border-[#1E293B] rounded-3xl;
+  }
+
+  .btn-primary {
+    @apply px-8 py-4 bg-[#3B82F6] text-white font-bold rounded-full hover:bg-blue-500 transition-all duration-200 shadow-lg shadow-blue-500/20 active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply px-8 py-4 bg-[#0F172A] text-[#E5E7EB] font-bold rounded-full border border-[#1E293B] hover:bg-[#1E293B] transition-all duration-200 active:scale-95;
+  }
+}

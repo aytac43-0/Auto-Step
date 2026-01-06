@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { createAutomation, toggleAutomationStatus, deleteAutomation } from './automation-actions'
-import { Plus, Play, Pause, Trash2, Loader2 } from 'lucide-react'
+import { Plus, Play, Pause, Trash2, Loader2, Cpu, ShieldCheck, Activity } from 'lucide-react'
 
 export function AutomationsList({ initialAutomations, isAdmin }: { initialAutomations: any[], isAdmin: boolean }) {
     const [automations, setAutomations] = useState(initialAutomations)
@@ -18,7 +18,6 @@ export function AutomationsList({ initialAutomations, isAdmin }: { initialAutoma
         if (result.success) {
             setNewName('')
             setIsAdding(false)
-            // Refresh logic would ideally use router.refresh() but local state is faster for UX
             window.location.reload()
         }
         setLoading(null)
@@ -44,86 +43,107 @@ export function AutomationsList({ initialAutomations, isAdmin }: { initialAutoma
     }
 
     return (
-        <div className="bg-slate-900/30 border border-slate-800 p-8 rounded-3xl">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">My Automations</h2>
+        <div className="bg-[#0B1220] rounded-2xl overflow-hidden">
+            <div className="px-8 py-6 border-b border-[#1E293B] flex justify-between items-center bg-gradient-to-r from-[#0B1220] to-[#0F172A]">
+                <div className="flex items-center gap-3">
+                    <Cpu className="text-blue-500" size={24} />
+                    <h2 className="text-xl font-black tracking-tight text-[#E5E7EB]">My Automations</h2>
+                </div>
                 {isAdmin && (
                     <button
                         onClick={() => setIsAdding(!isAdding)}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-sm font-medium transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-blue-500/20"
                     >
-                        <Plus size={18} />
-                        Create New
+                        <Plus size={16} />
+                        New Asset
                     </button>
                 )}
             </div>
 
-            {isAdmin && isAdding && (
-                <form onSubmit={handleAdd} className="mb-8 p-4 bg-slate-950/50 rounded-2xl border border-slate-800 flex gap-4">
-                    <input
-                        name="name"
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                        placeholder="Automation Name"
-                        className="flex-1 bg-transparent border-none focus:ring-0 outline-none"
-                        autoFocus
-                    />
-                    <button
-                        type="submit"
-                        disabled={loading === 'adding'}
-                        className="px-4 py-2 bg-white text-black rounded-lg text-sm font-bold disabled:opacity-50"
-                    >
-                        {loading === 'adding' ? <Loader2 className="animate-spin" size={18} /> : 'Save'}
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setIsAdding(false)}
-                        className="px-4 py-2 text-slate-400 hover:text-white text-sm"
-                    >
-                        Cancel
-                    </button>
-                </form>
-            )}
+            <div className="p-8">
+                {isAdmin && isAdding && (
+                    <form onSubmit={handleAdd} className="mb-8 p-6 bg-[#020617] rounded-2xl border border-[#1E293B] flex gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                        <input
+                            name="name"
+                            value={newName}
+                            onChange={(e) => setNewName(e.target.value)}
+                            placeholder="Automation Name"
+                            className="flex-1 bg-transparent border-none focus:ring-0 outline-none text-[#E5E7EB] placeholder:text-[#94A3B8]"
+                            autoFocus
+                        />
+                        <button
+                            type="submit"
+                            disabled={loading === 'adding'}
+                            className="px-6 py-2 bg-[#3B82F6] text-white rounded-lg text-xs font-bold disabled:opacity-50 hover:bg-blue-500 transition-colors"
+                        >
+                            {loading === 'adding' ? <Loader2 className="animate-spin" size={16} /> : 'Deploy'}
+                        </button>
+                    </form>
+                )}
 
-            {automations.length === 0 ? (
-                <div className="text-center py-12 bg-slate-950/30 rounded-2xl border border-dashed border-slate-800">
-                    <p className="text-slate-500 mb-4">No automations found{isAdmin ? '. Create your first one to get started!' : '.'}</p>
-                </div>
-            ) : (
-                <div className="space-y-4">
-                    {automations.map((auto) => (
-                        <div key={auto.id} className="flex items-center justify-between p-4 bg-slate-950/50 rounded-2xl border border-slate-800 hover:border-slate-700 transition-colors">
-                            <div>
-                                <h3 className="font-medium text-white">{auto.name}</h3>
-                                <p className="text-xs text-slate-500 italic">Created {new Date(auto.created_at).toLocaleDateString()}</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${auto.status === 'active' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}`}>
-                                    {auto.status}
-                                </span>
-                                {isAdmin && (
-                                    <>
-                                        <button
-                                            onClick={() => handleToggle(auto.id, auto.status)}
-                                            disabled={loading === auto.id}
-                                            className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors disabled:opacity-50"
-                                        >
-                                            {loading === auto.id ? <Loader2 className="animate-spin" size={18} /> : (auto.status === 'active' ? <Pause size={18} /> : <Play size={18} />)}
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(auto.id)}
-                                            disabled={loading === auto.id}
-                                            className="p-2 hover:bg-red-500/10 rounded-lg text-slate-400 hover:text-red-500 transition-colors disabled:opacity-50"
-                                        >
-                                            <Trash2 size={18} />
-                                        </button>
-                                    </>
-                                )}
-                            </div>
+                {automations.length === 0 ? (
+                    <div className="text-center py-20 bg-[#020617]/50 rounded-2xl border border-dashed border-[#1E293B]">
+                        <div className="w-16 h-16 bg-[#0B1220] rounded-2xl flex items-center justify-center mx-auto mb-6 border border-[#1E293B]">
+                            <Activity size={32} className="text-[#1E293B]" />
                         </div>
-                    ))}
-                </div>
-            )}
+                        <p className="text-[#94A3B8] font-medium">No automation assets currently assigned.</p>
+                        {isAdmin && <p className="text-[#94A3B8] text-xs mt-2 italic">Add a new asset to get started as admin.</p>}
+                    </div>
+                ) : (
+                    <div className="grid gap-4">
+                        {automations.map((auto) => (
+                            <div key={auto.id} className="group flex items-center justify-between p-5 bg-[#0F172A]/50 rounded-2xl border border-[#1E293B] hover:border-blue-500/30 transition-all hover:bg-[#0F172A] relative overflow-hidden">
+                                <div className="absolute top-0 left-0 w-1 h-full bg-blue-500/0 group-hover:bg-blue-500/50 transition-all" />
+
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 bg-[#020617] rounded-xl flex items-center justify-center text-blue-400 border border-[#1E293B]">
+                                        <Cpu size={20} />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-[#E5E7EB]">{auto.name}</h3>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <ShieldCheck size={12} className="text-emerald-500" />
+                                            <p className="text-[10px] text-[#94A3B8] font-mono tracking-tighter uppercase italic">System Asset: {auto.id.slice(0, 8)}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-3">
+                                    <div className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${auto.status === 'active' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}`}>
+                                        <span className={`w-1 h-1 rounded-full ${auto.status === 'active' ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`} />
+                                        {auto.status}
+                                    </div>
+
+                                    {isAdmin && (
+                                        <div className="flex items-center gap-1 border-l border-[#1E293B] ml-2 pl-3">
+                                            <button
+                                                onClick={() => handleToggle(auto.id, auto.status)}
+                                                disabled={loading === auto.id}
+                                                className="p-2 hover:bg-[#1E293B] rounded-lg text-[#94A3B8] hover:text-white transition-colors disabled:opacity-50"
+                                                title={auto.status === 'active' ? 'Pause' : 'Resume'}
+                                            >
+                                                {loading === auto.id ? <Loader2 className="animate-spin" size={16} /> : (auto.status === 'active' ? <Pause size={16} /> : <Play size={16} />)}
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(auto.id)}
+                                                disabled={loading === auto.id}
+                                                className="p-2 hover:bg-red-500/10 rounded-lg text-[#94A3B8] hover:text-red-500 transition-colors disabled:opacity-50"
+                                                title="Delete"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            <div className="px-8 py-4 bg-[#0B1220]/50 border-t border-[#1E293B] text-center">
+                <p className="text-[10px] text-[#94A3B8] uppercase tracking-widest font-bold">Secure Access • System Integrity Guaranteed</p>
+            </div>
         </div>
     )
 }

@@ -3,11 +3,7 @@ import { redirect } from "next/navigation";
 import { logout } from "../auth/actions";
 import Link from "next/link";
 import { AutomationsList } from "./AutomationsList";
-import { UserSettings } from "./UserSettings";
-import { SubscriptionCard } from "./SubscriptionCard";
-import { MyProducts } from "./MyProducts";
-import { SubscriptionBadge } from "./SubscriptionBadge";
-import { Activity, Zap, Shield } from "lucide-react";
+import { Activity, Zap, Shield, LogOut, User, ShoppingBag, Search } from "lucide-react";
 
 export default async function DashboardPage() {
     const supabase = createClient();
@@ -19,20 +15,13 @@ export default async function DashboardPage() {
         return redirect("/login");
     }
 
-    // Fetch real data
-    const [profileResponse, automationsResponse, subResponse, plansResponse, purchasesResponse] = await Promise.all([
+    const [profileResponse, automationsResponse] = await Promise.all([
         supabase.from("profiles").select("*").eq("user_id", user.id).single(),
         supabase.from("automations").select("*").eq("user_id", user.id).order('created_at', { ascending: false }),
-        supabase.from("subscriptions").select("*, plans(*)").eq("user_id", user.id).single(),
-        supabase.from("plans").select("*").eq("active", true).order("price", { ascending: true }),
-        supabase.from("purchases").select("*, products(id, name, description, price)").eq("user_id", user.id)
     ]);
 
     const profile = profileResponse.data;
     const automations = automationsResponse.data || [];
-    const subscription = subResponse.data;
-    const plans = plansResponse.data || [];
-    const purchases = purchasesResponse.data || [];
 
     const metrics = {
         total: automations.length,
@@ -40,81 +29,107 @@ export default async function DashboardPage() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col">
-            <nav className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div className="min-h-screen flex flex-col bg-[#020617] text-[#E5E7EB]">
+            {/* Header v2 */}
+            <nav className="border-b border-[#1E293B] bg-[#0B1220]/80 backdrop-blur-md sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
                     <Link href="/dashboard" className="flex items-center gap-2 group transition-all">
-                        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-lg group-hover:scale-110 transition-transform" />
-                        <span className="font-bold text-xl">Auto Step</span>
+                        <div className="w-9 h-9 bg-gradient-to-br from-[#3B82F6] to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
+                            <Zap size={20} className="text-white fill-current" />
+                        </div>
+                        <span className="font-black text-xl tracking-tight">AUTO STEP</span>
                     </Link>
-                    <div className="flex items-center gap-4">
-                        <Link
-                            href="/account"
-                            className="px-4 py-2 text-slate-300 hover:text-white transition-colors text-sm font-medium"
-                        >
-                            Account
-                        </Link>
-                        {profile?.role === "admin" && (
-                            <Link
-                                href="/admin"
-                                className="px-4 py-2 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 rounded-lg transition-colors text-sm font-medium"
-                            >
-                                Admin Panel
-                            </Link>
-                        )}
-                        <form action={logout}>
-                            <button
-                                type="submit"
-                                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors"
-                            >
-                                Logout
-                            </button>
-                        </form>
+
+                    <div className="flex items-center gap-6">
+                        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-[#0F172A] border border-[#1E293B] rounded-full text-xs font-bold text-[#94A3B8]">
+                            <User size={14} className="text-blue-500" />
+                            <span>{profile?.username}</span>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            {profile?.role === "admin" && (
+                                <Link
+                                    href="/admin"
+                                    className="p-2 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 rounded-xl transition-all border border-amber-500/20"
+                                    title="Admin Console"
+                                >
+                                    <Shield size={20} />
+                                </Link>
+                            )}
+                            <form action={logout}>
+                                <button
+                                    type="submit"
+                                    className="p-2 text-[#94A3B8] hover:text-white hover:bg-red-500/10 rounded-xl transition-all group"
+                                    title="Logout"
+                                >
+                                    <LogOut size={20} className="group-hover:translate-x-0.5 transition-transform" />
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </nav>
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+                {/* Greeting Section */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16">
                     <div>
-                        <h1 className="text-4xl font-bold mb-2 text-slate-100">Hello, {profile?.username || 'User'}!</h1>
-                        <p className="text-slate-400">Welcome back to your automation hub.</p>
+                        <h1 className="text-4xl md:text-5xl font-black mb-3">Hello, {profile?.username || 'User'}!</h1>
+                        <p className="text-[#94A3B8] text-lg">Manage your premium automation assets from one place.</p>
                     </div>
 
                     <Link
                         href="/products"
-                        className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all hover:scale-105 shadow-lg shadow-blue-500/20"
+                        className="btn-primary flex items-center gap-3 group"
                     >
-                        Browse Products
+                        <ShoppingBag size={20} />
+                        Browse Marketplace
+                        <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>
 
-                {/* Metrics Grid */}
-                <div className="grid md:grid-cols-2 gap-6 mb-12">
-                    <div className="bg-slate-900/30 border border-slate-800 p-8 rounded-3xl relative overflow-hidden group hover:border-slate-700 transition-colors">
-                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <Zap size={120} className="text-blue-500" />
+                <div className="grid lg:grid-cols-12 gap-12">
+                    {/* Main Content Area */}
+                    <div className="lg:col-span-8 space-y-12">
+                        <div className="premium-surface p-1">
+                            <AutomationsList initialAutomations={automations} isAdmin={profile?.role === 'admin'} />
                         </div>
-                        <p className="text-slate-500 text-sm font-medium mb-1 flex items-center gap-2">
-                            <Zap size={16} className="text-blue-500" />
-                            Active Automations
-                        </p>
-                        <p className="text-5xl font-bold">{metrics.total}</p>
                     </div>
-                    <div className="bg-slate-900/30 border border-slate-800 p-8 rounded-3xl relative overflow-hidden group hover:border-slate-700 transition-colors">
-                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <Activity size={120} className="text-emerald-500" />
-                        </div>
-                        <p className="text-slate-500 text-sm font-medium mb-1 flex items-center gap-2">
-                            <Activity size={16} className="text-emerald-500" />
-                            Last Activity
-                        </p>
-                        <p className="text-2xl font-bold mt-4">{metrics.lastActivity}</p>
-                    </div>
-                </div>
 
-                <div className="max-w-4xl">
-                    <AutomationsList initialAutomations={automations} isAdmin={profile?.role === 'admin'} />
+                    {/* Sidebar / Info */}
+                    <div className="lg:col-span-4 space-y-8">
+                        <div className="premium-card p-8">
+                            <div className="flex items-center gap-3 mb-6">
+                                <Activity size={24} className="text-blue-500" />
+                                <h2 className="font-bold text-lg">Activity Metrics</h2>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div>
+                                    <p className="text-[#94A3B8] text-sm mb-1 uppercase tracking-widest font-bold">Active Assets</p>
+                                    <p className="text-4xl font-black text-white">{metrics.total}</p>
+                                </div>
+                                <div className="pt-6 border-t border-[#1E293B]">
+                                    <p className="text-[#94A3B8] text-sm mb-1 uppercase tracking-widest font-bold">Last Sync</p>
+                                    <p className="text-sm font-mono text-blue-400">{metrics.lastActivity}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="premium-surface p-8 bg-gradient-to-br from-[#0B1220] to-[#020617]">
+                            <h3 className="font-bold mb-4 flex items-center gap-2">
+                                <Search size={18} className="text-blue-500" />
+                                Find something else?
+                            </h3>
+                            <p className="text-sm text-[#94A3B8] leading-relaxed mb-6">
+                                Looking for a specific automation code? Search our global marketplace to find the perfect fit.
+                            </p>
+                            <Link href="/products" className="text-sm font-bold text-blue-500 hover:text-blue-400 flex items-center gap-2 group transition-colors">
+                                Marketplace Search
+                                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </main>
         </div>

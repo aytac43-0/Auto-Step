@@ -2,15 +2,9 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ProductList } from "./ProductList";
-import { PaymentIssuesPanel } from "./PaymentIssuesPanel";
-import { SubscriptionManager } from "./SubscriptionManager";
-import { ShoppingBag, Users, Activity, Zap, Shield, ArrowLeft, Globe, AlertTriangle, CheckCircle, Clock } from "lucide-react";
+import { ShoppingBag, Users, Zap, Shield, ArrowLeft, Cpu, CreditCard, Activity } from "lucide-react";
 
-export default async function AdminPage({
-    searchParams,
-}: {
-    searchParams: { filter?: string };
-}) {
+export default async function AdminPage() {
     const supabase = createClient();
     const {
         data: { user },
@@ -30,171 +24,133 @@ export default async function AdminPage({
         return redirect("/dashboard");
     }
 
-    const filter = searchParams.filter || 'issues'; // Default to issues (grace + expired)
-
-    // Fetch Admin Stats
-    const [usersCount, productsResponse, purchasesResponse, subsResponse, graceSubsResponse] = await Promise.all([
+    // Fetch Admin Stats for Marketplace
+    const [usersCount, productsResponse, purchasesResponse, automationsCount] = await Promise.all([
         supabase.from("profiles").select("*", { count: 'exact', head: true }),
         supabase.from("products").select("*").order("name", { ascending: true }),
         supabase.from("purchases").select(`
-      *,
-      profiles (email),
-      products (name, price),
-      plans (name, price)
-    `).order('created_at', { ascending: false }),
-        supabase.from("subscriptions").select(`
-      *,
-      profiles (email),
-      plans (name)
-    `).order('current_period_end', { ascending: false }),
-        supabase.from("subscriptions").select(`
-      *,
-      profiles (email),
-      plans (name)
-    `).eq('status', 'grace').order('grace_started_at', { ascending: true })
+          *,
+          profiles (email),
+          products (name, price)
+        `).order('created_at', { ascending: false }),
+        supabase.from("automations").select("*", { count: 'exact', head: true })
     ]);
 
     const products = productsResponse.data || [];
     const purchases = purchasesResponse.data || [];
-    const allSubscriptions = subsResponse.data || [];
-    const graceSubscriptions = graceSubsResponse.data || [];
-
-    // Filter subscriptions based on tab
-    let filteredSubscriptions = allSubscriptions;
-    if (filter === 'active') {
-        filteredSubscriptions = allSubscriptions.filter((s: any) => s.status === 'active');
-    } else if (filter === 'grace') {
-        filteredSubscriptions = graceSubscriptions;
-    } else if (filter === 'expired') {
-        filteredSubscriptions = allSubscriptions.filter((s: any) => s.status === 'expired');
-    } else if (filter === 'issues') {
-        // Grace + Expired
-        filteredSubscriptions = allSubscriptions.filter((s: any) =>
-            s.status === 'grace' || s.status === 'expired'
-        );
-    }
-
-    // Calculate KPIs
-    const activeCount = allSubscriptions.filter((s: any) => s.status === 'active').length;
-    const graceCount = graceSubscriptions.length;
-    const expiredTodayCount = allSubscriptions.filter((s: any) => {
-        if (s.status !== 'expired') return false;
-        const periodEnd = new Date(s.current_period_end);
-        const today = new Date();
-        return periodEnd.toDateString() === today.toDateString();
-    }).length;
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
-            <nav className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div className="min-h-screen bg-[#020617] text-[#E5E7EB] flex flex-col">
+            {/* Header v2 */}
+            <nav className="border-b border-[#1E293B] bg-[#0B1220]/80 backdrop-blur-md sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
                     <div className="flex items-center gap-2">
                         <Link href="/dashboard" className="flex items-center gap-2 group">
                             <Shield className="text-amber-500 group-hover:scale-110 transition-transform" />
-                            <span className="font-bold text-xl">Admin Console</span>
+                            <span className="font-black text-xl tracking-tight uppercase">Admin Console</span>
                         </Link>
                     </div>
                     <Link
                         href="/dashboard"
-                        className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-colors flex items-center gap-2"
+                        className="text-xs font-black uppercase tracking-widest text-[#94A3B8] hover:text-white transition-colors flex items-center gap-2"
                     >
                         <ArrowLeft size={16} />
-                        Back to Dashboard
+                        Exit to Dashboard
                     </Link>
                 </div>
             </nav>
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <h1 className="text-4xl font-bold mb-8">System Overview</h1>
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1 w-full">
+                <div className="mb-12">
+                    <h1 className="text-4xl font-black mb-2 tracking-tight">Marketplace Intel</h1>
+                    <p className="text-[#94A3B8]">Global oversight of automation assets and customer acquisitions.</p>
+                </div>
 
-                {/* KPI Summary */}
+                {/* KPI Summary v2 */}
                 <div className="grid md:grid-cols-4 gap-6 mb-12">
-                    <div className="bg-blue-500/10 border border-blue-500/20 p-6 rounded-2xl">
-                        <p className="text-blue-400 text-sm font-medium mb-1">Total Users</p>
-                        <p className="text-3xl font-bold">{usersCount.count || 0}</p>
-                    </div>
-                    <div className="bg-emerald-500/10 border border-emerald-500/20 p-6 rounded-2xl">
-                        <div className="flex items-center gap-2 mb-1">
-                            <CheckCircle size={16} className="text-emerald-400" />
-                            <p className="text-emerald-400 text-sm font-medium">Active Subscriptions</p>
+                    <div className="premium-card p-6 bg-blue-500/5 border-blue-500/10">
+                        <div className="flex items-center gap-3 mb-2">
+                            <Users size={18} className="text-blue-400" />
+                            <p className="text-[#94A3B8] text-[10px] font-black uppercase tracking-widest">Global Users</p>
                         </div>
-                        <p className="text-3xl font-bold">{activeCount}</p>
+                        <p className="text-3xl font-black text-white">{usersCount.count || 0}</p>
                     </div>
-                    <div className="bg-amber-500/10 border border-amber-500/20 p-6 rounded-2xl">
-                        <div className="flex items-center gap-2 mb-1">
-                            <Clock size={16} className="text-amber-400" />
-                            <p className="text-amber-400 text-sm font-medium">Users in Grace</p>
+
+                    <div className="premium-card p-6 bg-emerald-500/5 border-emerald-500/10">
+                        <div className="flex items-center gap-3 mb-2">
+                            <ShoppingBag size={18} className="text-emerald-400" />
+                            <p className="text-[#94A3B8] text-[10px] font-black uppercase tracking-widest">Active Products</p>
                         </div>
-                        <p className="text-3xl font-bold">{graceCount}</p>
+                        <p className="text-3xl font-black text-white">{products.length}</p>
                     </div>
-                    <div className="bg-red-500/10 border border-red-500/20 p-6 rounded-2xl">
-                        <div className="flex items-center gap-2 mb-1">
-                            <AlertTriangle size={16} className="text-red-400" />
-                            <p className="text-red-400 text-sm font-medium">Expired Today</p>
+
+                    <div className="premium-card p-6 bg-amber-500/5 border-amber-500/10">
+                        <div className="flex items-center gap-3 mb-2">
+                            <CreditCard size={18} className="text-amber-400" />
+                            <p className="text-[#94A3B8] text-[10px] font-black uppercase tracking-widest">Asset Sales</p>
                         </div>
-                        <p className="text-3xl font-bold">{expiredTodayCount}</p>
+                        <p className="text-3xl font-black text-white">{purchases.length}</p>
+                    </div>
+
+                    <div className="premium-card p-6 bg-indigo-500/5 border-indigo-500/10">
+                        <div className="flex items-center gap-3 mb-2">
+                            <Cpu size={18} className="text-indigo-400" />
+                            <p className="text-[#94A3B8] text-[10px] font-black uppercase tracking-widest">Active Instances</p>
+                        </div>
+                        <p className="text-3xl font-black text-white">{automationsCount.count || 0}</p>
                     </div>
                 </div>
 
-                <div className="grid lg:grid-cols-3 gap-12">
-                    <div className="lg:col-span-3 space-y-12">
-                        {/* Payment Issues Alert */}
-                        {graceSubscriptions.length > 0 && (
-                            <PaymentIssuesPanel graceSubscriptions={graceSubscriptions} />
-                        )}
-
+                <div className="grid lg:grid-cols-12 gap-12">
+                    <div className="lg:col-span-12 space-y-12">
                         {/* Product Management */}
-                        <ProductList products={products} />
+                        <div className="premium-surface p-1">
+                            <ProductList products={products} />
+                        </div>
 
-                        {/* Subscription Manager with Filters */}
-                        <SubscriptionManager
-                            subscriptions={filteredSubscriptions}
-                            currentFilter={filter}
-                        />
-
-                        {/* Recent Purchases Table */}
-                        <div className="bg-slate-900/30 border border-slate-800 rounded-3xl overflow-hidden">
-                            <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
-                                <div className="flex items-center gap-2">
-                                    <ShoppingCart className="text-emerald-500" />
-                                    <h2 className="text-xl font-bold">Recent Purchases</h2>
+                        {/* Recent Asset Acquisitions Table */}
+                        <div className="premium-card overflow-hidden">
+                            <div className="p-8 border-b border-[#1E293B] flex justify-between items-center bg-gradient-to-r from-[#0B1220] to-[#0F172A]">
+                                <div className="flex items-center gap-3">
+                                    <Activity className="text-emerald-400" size={24} />
+                                    <h2 className="text-xl font-black tracking-tight">Recent Acquisitions</h2>
                                 </div>
                             </div>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
                                     <thead>
-                                        <tr className="text-slate-500 text-sm bg-slate-950/50">
-                                            <th className="px-6 py-4">Customer Email</th>
-                                            <th className="px-6 py-4">Item Name</th>
-                                            <th className="px-6 py-4">Status</th>
-                                            <th className="px-6 py-4">Amount</th>
-                                            <th className="px-6 py-4 text-right">Date</th>
+                                        <tr className="text-[#94A3B8] text-xs font-black uppercase tracking-widest bg-[#020617]/50">
+                                            <th className="px-8 py-5">Customer Entity</th>
+                                            <th className="px-8 py-5">Asset Acquired</th>
+                                            <th className="px-8 py-5">Verification</th>
+                                            <th className="px-8 py-5">Value</th>
+                                            <th className="px-8 py-5 text-right">Timestamp</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-800">
+                                    <tbody className="divide-y divide-[#1E293B]">
                                         {purchases.length === 0 ? (
                                             <tr>
-                                                <td colSpan={5} className="px-6 py-12 text-center text-slate-500">No purchases found.</td>
+                                                <td colSpan={5} className="px-8 py-16 text-center text-[#94A3B8] italic">No transaction data available.</td>
                                             </tr>
                                         ) : (
                                             purchases.map((purchase: any) => (
-                                                <tr key={purchase.id} className="hover:bg-slate-800/20 transition-colors">
-                                                    <td className="px-6 py-4 font-medium">{purchase.profiles?.email}</td>
-                                                    <td className="px-6 py-4">
-                                                        <span className="px-2 py-1 bg-blue-500/10 text-blue-400 rounded text-xs font-bold">
-                                                            {purchase.products?.name || purchase.plans?.name}
+                                                <tr key={purchase.id} className="hover:bg-[#3B82F6]/5 transition-colors group">
+                                                    <td className="px-8 py-5 text-[#E5E7EB] font-bold">{purchase.profiles?.email}</td>
+                                                    <td className="px-8 py-5">
+                                                        <span className="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-lg text-[10px] font-black uppercase tracking-widest border border-blue-500/20">
+                                                            {purchase.products?.name}
                                                         </span>
                                                     </td>
-                                                    <td className="px-6 py-4">
-                                                        <span className={`px-2 py-1 rounded text-xs font-bold ${purchase.status === 'paid' ? 'bg-emerald-500/10 text-emerald-500' :
+                                                    <td className="px-8 py-5">
+                                                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${purchase.status === 'paid' ? 'bg-emerald-500/10 text-emerald-500' :
                                                             purchase.status === 'failed' ? 'bg-red-500/10 text-red-500' :
                                                                 'bg-amber-500/10 text-amber-500'
                                                             }`}>
-                                                            {purchase.status?.toUpperCase() || 'PENDING'}
+                                                            {purchase.status || 'PENDING'}
                                                         </span>
                                                     </td>
-                                                    <td className="px-6 py-4 font-mono">${purchase.products?.price || purchase.plans?.price}</td>
-                                                    <td className="px-6 py-4 text-right text-slate-500 text-sm">
+                                                    <td className="px-8 py-5 font-mono text-white text-sm font-bold">${purchase.products?.price}</td>
+                                                    <td className="px-8 py-5 text-right text-[#94A3B8] text-xs font-medium">
                                                         {new Date(purchase.created_at).toLocaleDateString()}
                                                     </td>
                                                 </tr>
@@ -209,26 +165,4 @@ export default async function AdminPage({
             </main>
         </div>
     );
-}
-
-// Minimal icons helper if Lucide doesn't have it (but it should)
-function ShoppingCart(props: any) {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <circle cx="8" cy="21" r="1" />
-            <circle cx="19" cy="21" r="1" />
-            <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
-        </svg>
-    )
 }

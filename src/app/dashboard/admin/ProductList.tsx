@@ -6,12 +6,8 @@ import {
     Edit2,
     Check,
     X,
-    Globe,
     Loader2,
     ShieldCheck,
-    Cpu,
-    Database,
-    Activity,
     Server
 } from "lucide-react";
 
@@ -50,9 +46,9 @@ export function ProductList({ initialProducts }: { initialProducts: any[] }) {
     };
 
     if (loading) return (
-        <div className="py-40 text-center flex flex-col items-center justify-center gap-6">
-            <Loader2 className="animate-spin text-cyan-400/40" size={40} />
-            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500">Connecting to Repository...</p>
+        <div className="py-20 text-center flex flex-col items-center justify-center gap-6">
+            <Loader2 className="animate-spin text-cyan-400/40" size={32} />
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500">Accessing Repository...</p>
         </div>
     );
 
@@ -61,32 +57,32 @@ export function ProductList({ initialProducts }: { initialProducts: any[] }) {
             <table className="w-full text-left border-collapse">
                 <thead>
                     <tr className="border-b border-white/5">
-                        <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">System Name</th>
-                        <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Module Code</th>
-                        <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Target URL</th>
-                        <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 text-right">Integrity</th>
+                        <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">System Name</th>
+                        <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Module Code</th>
+                        <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Target URL</th>
+                        <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 text-right">Integrity</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.02]">
                     {products.map((product) => (
                         <tr key={product.id} className="group hover:bg-white/[0.01] transition-colors">
-                            <td className="px-8 py-8">
+                            <td className="px-6 py-6">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-cyan-400 group-hover:border-cyan-400/20 transition-all">
-                                        <Server size={20} />
+                                    <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-cyan-400 group-hover:border-cyan-400/20 transition-all">
+                                        <Server size={16} />
                                     </div>
                                     <div>
                                         <p className="text-white font-bold text-sm leading-none mb-1">{product.name}</p>
-                                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Asset Value: ${product.price}</p>
+                                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">${product.price}</p>
                                     </div>
                                 </div>
                             </td>
-                            <td className="px-8 py-8">
+                            <td className="px-6 py-6">
                                 <code className="text-[10px] font-mono font-bold text-gray-400 bg-white/5 px-2 py-1 rounded border border-white/5">
                                     {product.id.split('-')[0].toUpperCase()}
                                 </code>
                             </td>
-                            <td className="px-8 py-8">
+                            <td className="px-6 py-6">
                                 {editingId === product.id ? (
                                     <div className="flex items-center gap-2">
                                         <input
@@ -127,14 +123,11 @@ export function ProductList({ initialProducts }: { initialProducts: any[] }) {
                                     </div>
                                 )}
                             </td>
-                            <td className="px-8 py-8 text-right">
+                            <td className="px-6 py-6 text-right">
                                 <div className="flex flex-col items-end gap-1">
                                     <div className="flex items-center gap-1.5 text-emerald-500 text-[9px] font-bold uppercase tracking-widest">
                                         <ShieldCheck size={12} />
                                         Verified
-                                    </div>
-                                    <div className="text-[9px] font-bold text-gray-600 uppercase tracking-tighter">
-                                        Stability: High
                                     </div>
                                 </div>
                             </td>

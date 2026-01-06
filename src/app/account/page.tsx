@@ -1,4 +1,7 @@
-import { createClient } from "@/utils/supabase/server";
+'use client';
+
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 import {
     Mail,
     User,
@@ -7,23 +10,46 @@ import {
     ChevronRight,
     Briefcase,
     Globe,
-    ExternalLink
+    ExternalLink,
+    ArrowLeft
 } from "lucide-react";
 import Link from "next/link";
-import { logout } from "../auth/actions";
-import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default async function AccountPage() {
+export default function AccountPage() {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const router = useRouter();
+    const [user, setUser] = useState<any>(null);
+    const [profile, setProfile] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
 
-    if (!user) return redirect("/login");
+    useEffect(() => {
+        async function loadIdentity() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                router.replace('/login');
+                return;
+            }
+            setUser(user);
 
-    const { data: profile } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", user.id)
-        .single();
+            const { data: profile } = await supabase
+                .from("profiles")
+                .select("*")
+                .eq("user_id", user.id)
+                .single();
+            setProfile(profile);
+            setLoading(false);
+        }
+        loadIdentity();
+    }, []);
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        router.replace('/');
+        router.refresh();
+    };
+
+    if (loading) return null;
 
     return (
         <div className="min-h-screen pt-32 pb-20 px-6">
@@ -33,8 +59,8 @@ export default async function AccountPage() {
                         <User size={32} />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold text-white mb-1">Partner Identity</h1>
-                        <p className="text-gray-400 font-medium italic">Verified Operator ID: {user.id.split('-')[0].toUpperCase()}</p>
+                        <h1 className="text-3xl font-bold text-white mb-1 font-tight">Partner Identity</h1>
+                        <p className="text-gray-400 text-sm font-medium">Verified System UID: {user.id.split('-')[0].toUpperCase()}</p>
                     </div>
                 </div>
 
@@ -44,17 +70,17 @@ export default async function AccountPage() {
                         <div className="bg-[#111827] border border-white/5 p-8 rounded-2xl shadow-xl">
                             <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-8 flex items-center gap-2">
                                 <Briefcase size={14} className="text-cyan-400" />
-                                Official Credentials
+                                Credentials & Access
                             </h2>
 
                             <div className="space-y-8">
                                 <div className="group">
                                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Display Name</p>
-                                    <p className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors">{profile?.username || 'N/A'}</p>
+                                    <p className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors uppercase tracking-tight">{profile?.username || 'N/A'}</p>
                                 </div>
 
                                 <div className="group">
-                                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Registered Email</p>
+                                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Business Email</p>
                                     <div className="flex items-center gap-3">
                                         <Mail size={16} className="text-gray-500" />
                                         <p className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors">{user.email}</p>
@@ -62,27 +88,30 @@ export default async function AccountPage() {
                                 </div>
 
                                 <div className="group">
-                                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">System Role</p>
+                                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Access Role</p>
                                     <div className="flex items-center gap-3">
                                         <ShieldCheck size={16} className="text-emerald-500" />
-                                        <p className="text-lg font-bold text-white uppercase tracking-tight">{profile?.role || 'Partner'}</p>
+                                        <p className="text-lg font-bold text-white uppercase tracking-tight font-tight italic">{profile?.role || 'Partner'}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-[#111827] border border-white/5 p-6 rounded-2xl flex items-center justify-between group cursor-pointer hover:bg-red-500/5 hover:border-red-500/20 transition-all">
+                        <button
+                            onClick={handleLogout}
+                            className="w-full bg-[#111827] border border-white/5 p-6 rounded-2xl flex items-center justify-between group hover:bg-red-500/5 hover:border-red-500/20 transition-all text-left"
+                        >
                             <div className="flex items-center gap-4">
                                 <div className="p-3 rounded-xl bg-white/5 text-gray-400 group-hover:text-red-400 transition-colors">
                                     <LogOut size={20} />
                                 </div>
-                                <div onClick={logout}>
-                                    <p className="font-bold text-white group-hover:text-red-400 transition-colors">Secure Logout</p>
-                                    <p className="text-xs text-gray-500 uppercase tracking-widest mt-1">Terminate Transmission</p>
+                                <div>
+                                    <p className="font-bold text-white group-hover:text-red-400 transition-colors">Secure Sign Out</p>
+                                    <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Terminate Secure Session</p>
                                 </div>
                             </div>
                             <ChevronRight size={20} className="text-gray-800 group-hover:text-red-400 transition-colors" />
-                        </div>
+                        </button>
                     </div>
 
                     {/* Support / Help */}
@@ -90,19 +119,25 @@ export default async function AccountPage() {
                         <div className="w-16 h-16 bg-cyan-500/5 border border-cyan-500/10 rounded-full flex items-center justify-center text-cyan-400 mb-8">
                             <Globe size={32} />
                         </div>
-                        <h3 className="text-2xl font-bold text-white mb-4 italic tracking-tight">Support Architecture</h3>
-                        <p className="text-gray-400 text-sm leading-relaxed mb-10">
-                            Need a custom automation module or architectural support? Our lead system designers are available to help optimize your operations.
+                        <h3 className="text-2xl font-bold text-white mb-4 tracking-tight font-tight italic">Support Architecture</h3>
+                        <p className="text-gray-400 text-sm leading-relaxed mb-10 font-medium">
+                            Our team is available to assist with custom automation logic or architectural optimization for your business systems.
                         </p>
-                        <Link href="mailto:support@autostep.md" className="btn-secondary w-full py-4 flex items-center justify-center gap-3">
-                            Contact Lead Designer
-                            <ExternalLink size={16} />
-                        </Link>
+                        <div className="w-full space-y-3">
+                            <a href="mailto:architect@autostep.io" className="btn-secondary w-full py-3.5 flex items-center justify-center gap-3 text-xs">
+                                <Mail size={14} />
+                                architect@autostep.io
+                            </a>
+                            <a href="mailto:support@autostep.io" className="btn-secondary w-full py-3.5 flex items-center justify-center gap-3 text-xs">
+                                <Mail size={14} />
+                                support@autostep.io
+                            </a>
+                        </div>
 
                         <div className="mt-auto pt-10 border-t border-white/5 w-full">
                             <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                                 <ShieldCheck size={12} className="text-emerald-500" />
-                                Tier-3 Protocol Security
+                                Official Studio Partner
                             </div>
                         </div>
                     </div>
@@ -110,8 +145,8 @@ export default async function AccountPage() {
 
                 <div className="mt-12 flex justify-center">
                     <Link href="/dashboard" className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2 hover:text-white transition-colors group">
-                        <ChevronRight size={14} className="rotate-180 group-hover:-translate-x-1 transition-transform" />
-                        Return to Systems Dashboard
+                        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                        Return to Dashboard
                     </Link>
                 </div>
             </div>

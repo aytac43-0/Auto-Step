@@ -14,7 +14,7 @@ export function Footer() {
                             <span className="text-xl font-bold tracking-tight text-white uppercase font-sans">AUTO STEP</span>
                         </div>
                         <p className="text-gray-400 text-sm leading-relaxed max-w-sm mb-10 font-medium">
-                            Professional automation studio specialized in delivering high-performance business systems and architectural scaling solutions.
+                            A professional automation studio developing high-performance architectural solutions for modern enterprises.
                         </p>
                         <div className="flex items-center gap-4 text-emerald-500/60">
                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -25,43 +25,46 @@ export function Footer() {
                     <div className="md:col-span-2">
                         <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white mb-8">Solutions</h4>
                         <ul className="space-y-4">
-                            <li><Link href="/products" className="text-sm text-gray-500 hover:text-cyan-400 transition-colors font-medium">Module Catalog</Link></li>
-                            <li><Link href="/dashboard" className="text-sm text-gray-500 hover:text-cyan-400 transition-colors font-medium">Dashboard</Link></li>
-                            <li><Link href="/" className="text-sm text-gray-500 hover:text-cyan-400 transition-colors font-medium">Custom Systems</Link></li>
+                            <li><Link href="/products" className="text-sm text-gray-400 hover:text-white transition-colors font-medium">System Catalog</Link></li>
+                            <li><Link href="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors font-medium">Dashboard</Link></li>
+                            <li><Link href="/" className="text-sm text-gray-400 hover:text-white transition-colors font-medium">Home</Link></li>
                         </ul>
                     </div>
 
                     <div className="md:col-span-2">
-                        <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white mb-8">Protocol</h4>
+                        <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white mb-8">Legal</h4>
                         <ul className="space-y-4">
-                            <li><Link href="/terms" className="text-sm text-gray-500 hover:text-cyan-400 transition-colors font-medium">Terms of Service</Link></li>
-                            <li><Link href="/privacy-policy" className="text-sm text-gray-500 hover:text-cyan-400 transition-colors font-medium">Privacy Shield</Link></li>
+                            <li><Link href="/terms" className="text-sm text-gray-400 hover:text-white transition-colors font-medium">Terms of Operation</Link></li>
+                            <li><Link href="/privacy-policy" className="text-sm text-gray-400 hover:text-white transition-colors font-medium">Privacy Protection</Link></li>
                         </ul>
                     </div>
 
                     <div className="md:col-span-3">
-                        <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white mb-8">Inquiries</h4>
-                        <div className="bg-[#111827] border border-white/5 p-6 rounded-2xl">
-                            <p className="text-gray-500 text-xs mb-6 font-medium leading-relaxed">Connect with our lead system designers for enterprise automation requests.</p>
-                            <Link href="mailto:studio@autostep.io" className="flex items-center gap-3 py-3 px-6 bg-white/5 border border-white/10 rounded-xl text-gray-300 hover:text-cyan-400 hover:border-cyan-400/30 transition-all">
+                        <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white mb-8">Support & Inquiries</h4>
+                        <div className="bg-[#111827] border border-white/5 p-6 rounded-2xl space-y-4">
+                            <a href="mailto:architect@autostep.io" className="flex items-center gap-3 text-gray-400 hover:text-cyan-400 transition-colors">
                                 <Mail size={16} />
-                                <span className="text-[10px] font-bold uppercase tracking-widest leading-none">studio@autostep.io</span>
-                            </Link>
+                                <span className="text-[10px] font-bold uppercase tracking-widest leading-none">architect@autostep.io</span>
+                            </a>
+                            <a href="mailto:support@autostep.io" className="flex items-center gap-3 text-gray-400 hover:text-cyan-400 transition-colors">
+                                <Mail size={16} />
+                                <span className="text-[10px] font-bold uppercase tracking-widest leading-none">support@autostep.io</span>
+                            </a>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 gap-6">
                     <p className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em]">
-                        &copy; {new Date().getFullYear()} AUTO STEP STUDIO // ARCHITECTURAL SCALE
+                        &copy; {new Date().getFullYear()} AUTO STEP STUDIO. ALL ARCHITECTURAL RIGHTS RESERVED.
                     </p>
                     <div className="flex items-center gap-8">
                         <div className="flex items-center gap-2 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all cursor-default">
                             <Globe size={14} className="text-gray-400" />
-                            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Distributed System</span>
+                            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Global Network</span>
                         </div>
-                        <div className="flex items-center gap-2 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all cursor-default">
-                            <CheckCircle2 size={14} className="text-emerald-500" />
+                        <div className="flex items-center gap-2 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all cursor-default text-emerald-500">
+                            <CheckCircle2 size={14} />
                             <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Stability V3.2</span>
                         </div>
                     </div>

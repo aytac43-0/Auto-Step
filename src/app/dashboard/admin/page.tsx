@@ -7,12 +7,12 @@ import {
     Layout,
     TrendingUp,
     ArrowUpRight,
-    LogOut,
     ShieldCheck,
     Activity,
     CreditCard,
     Menu,
-    Plus
+    Plus,
+    LayoutDashboard
 } from "lucide-react";
 
 export default async function AdminPage() {
@@ -70,8 +70,8 @@ export default async function AdminPage() {
                     </div>
 
                     <Link href="/dashboard" className="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-white transition-colors flex items-center gap-2">
-                        Exit to Dashboard
-                        <ArrowUpRight size={14} />
+                        <LayoutDashboard size={14} />
+                        Return to Dashboard
                     </Link>
                 </div>
             </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Zap, Mail, ShieldCheck, ArrowRight } from "lucide-react";
 
 export default function VerifyEmailPage({
     searchParams,
@@ -6,33 +7,56 @@ export default function VerifyEmailPage({
     searchParams: { email?: string };
 }) {
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center px-4">
-            <div className="w-full max-w-md bg-slate-900/50 p-8 rounded-2xl border border-slate-800 backdrop-blur-sm text-center">
-                <div className="w-16 h-16 bg-blue-500/10 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                    </svg>
-                </div>
-                <h1 className="text-3xl font-bold mb-4">Verify your email</h1>
-                <p className="text-slate-400 mb-8 leading-relaxed">
-                    {searchParams.email ? (
-                        <>We've sent a verification link to <span className="text-white font-medium">{searchParams.email}</span>.</>
-                    ) : (
-                        "Please check your inbox for a verification link."
-                    )}
-                    {" "}Please verify your email before logging in to access the dashboard.
-                </p>
+        <div className="min-h-screen bg-[#070B14] text-[#E6F1FF] flex flex-col items-center justify-center px-4 relative overflow-hidden">
+            {/* Background Effects */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none">
+                <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-[#00E5FF]/5 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[20%] right-[-10%] w-[500px] h-[500px] bg-blue-600/5 blur-[120px] rounded-full" />
+            </div>
 
-                <div className="space-y-4">
-                    <Link
-                        href="/login"
-                        className="block w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-slate-200 transition-colors"
-                    >
-                        Back to Login
-                    </Link>
-                    <p className="text-slate-500 text-sm">
-                        Didn't receive an email? <button className="text-blue-400 hover:underline">Resend link</button>
+            <div className="w-full max-w-md relative z-10">
+                <div className="text-center mb-10">
+                    <div className="w-20 h-20 bg-[#00E5FF]/10 rounded-[2rem] flex items-center justify-center shadow-[0_0_30px_rgba(0,229,255,0.1)] mx-auto mb-10 border border-[#00E5FF]/20">
+                        <Mail size={40} className="text-[#00E5FF]" />
+                    </div>
+                    <h1 className="text-4xl font-black tracking-tight font-space uppercase italic">Verify Identity</h1>
+                    <p className="text-[#94A3B8] font-medium mt-4 leading-relaxed">
+                        A verification link has managed a secure tunnel to: <br />
+                        <span className="text-[#00E5FF] font-bold">{searchParams.email || 'your email'}</span>
                     </p>
+                </div>
+
+                <div className="glass-panel p-10 neon-border shadow-2xl text-center">
+                    <p className="text-[#94A3B8] text-sm mb-10">
+                        Please check your terminal. Click the link provided in the communication to fully initialize your operator account.
+                    </p>
+
+                    <div className="space-y-6">
+                        <Link href="/login" className="btn-primary w-full flex items-center justify-center gap-2 group">
+                            Return to Login
+                            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        </Link>
+
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#94A3B8]/40">
+                            Check spam if transmission is delayed.
+                        </p>
+                    </div>
+
+                    <div className="mt-10 pt-8 border-t border-[rgba(0,229,255,0.1)]">
+                        <div className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-500">
+                            <ShieldCheck size={14} />
+                            Identity Protocol Active
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-12 text-center">
+                    <Link href="/" className="inline-flex items-center gap-3 group">
+                        <div className="w-8 h-8 bg-[#00E5FF] rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(0,229,255,0.3)] transition-transform group-hover:scale-110">
+                            <Zap size={16} className="text-[#070B14] fill-current" />
+                        </div>
+                        <span className="text-sm font-black tracking-tighter text-[#94A3B8] uppercase font-space group-hover:text-[#E6F1FF] transition-colors">AUTO STEP</span>
+                    </Link>
                 </div>
             </div>
         </div>

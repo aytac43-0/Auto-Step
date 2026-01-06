@@ -1,133 +1,149 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { updateProductUrl } from './product-actions'
-import { Globe, Save, Loader2, Edit2, X, ShoppingBag } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { createClient } from "@/utils/supabase/client";
+import {
+    Edit2,
+    Check,
+    X,
+    Globe,
+    Loader2,
+    ShieldCheck,
+    Cpu,
+    Database,
+    Activity
+} from "lucide-react";
 
-export function ProductList({ products }: { products: any[] }) {
-    const [editingId, setEditingId] = useState<string | null>(null)
-    const [url, setUrl] = useState('')
-    const [loading, setLoading] = useState(false)
+export function ProductList({ initialProducts }: { initialProducts: any[] }) {
+    const supabase = createClient();
+    const [products, setProducts] = useState(initialProducts);
+    const [loading, setLoading] = useState(true);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [editUrl, setEditUrl] = useState('');
+    const [updating, setUpdating] = useState(false);
 
-    const handleSave = async (id: string) => {
-        setLoading(true)
-        try {
-            await updateProductUrl(id, url)
-            setEditingId(null)
-            window.location.reload()
-        } catch (err) {
-            console.error(err)
-        } finally {
-            setLoading(false)
+    useEffect(() => {
+        const fetchProducts = async () => {
+            const { data } = await supabase
+                .from("products")
+                .select("*")
+                .order("created_at", { ascending: false });
+            if (data) setProducts(data);
+            setLoading(false);
+        };
+        fetchProducts();
+    }, []);
+
+    const handleUpdateUrl = async (productId: string) => {
+        setUpdating(true);
+        const { error } = await supabase
+            .from("products")
+            .update({ access_url: editUrl })
+            .eq("id", productId);
+
+        if (!error) {
+            setProducts(products.map(p => p.id === productId ? { ...p, access_url: editUrl } : p));
+            setEditingId(null);
         }
-    }
+        setUpdating(false);
+    };
+
+    if (loading) return (
+        <div className="py-40 text-center flex flex-col items-center justify-center gap-6 animate-pulse">
+            <Loader2 className="animate-spin text-[#00E5FF]" size={40} />
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#00E5FF]">Accessing Database Nodes...</p>
+        </div>
+    );
 
     return (
-        <div className="premium-card overflow-hidden">
-            <div className="p-8 border-b border-[#1E293B] flex justify-between items-center bg-gradient-to-r from-[#0B1220] to-[#0F172A]">
-                <div className="flex items-center gap-3">
-                    <ShoppingBag className="text-blue-500" size={24} />
-                    <h2 className="text-xl font-black tracking-tight">Manage Assets</h2>
-                </div>
-            </div>
-            <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                    <thead>
-                        <tr className="text-[#94A3B8] text-xs font-black uppercase tracking-widest bg-[#020617]/50">
-                            <th className="px-8 py-5">Asset Name</th>
-                            <th className="px-8 py-5">Market Value</th>
-                            <th className="px-8 py-5">Management URL</th>
-                            <th className="px-8 py-5 text-right">Verification</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#1E293B]">
-                        {products.map((product) => (
-                            <tr key={product.id} className="hover:bg-[#3B82F6]/5 transition-colors group">
-                                <td className="px-8 py-5 font-bold text-[#E5E7EB]">{product.name}</td>
-                                <td className="px-8 py-5 font-mono text-emerald-500 font-bold">${product.price}</td>
-                                <td className="px-8 py-5">
-                                    {editingId === product.id ? (
-                                        <div className="flex items-center gap-2 animate-in fade-in duration-300">
-                                            <input
-                                                type="url"
-                                                value={url}
-                                                onChange={(e) => setUrl(e.target.value)}
-                                                placeholder="https://exclusive-asset-v1.com"
-                                                className="w-full bg-[#020617] border border-[#1E293B] rounded-xl px-4 py-2 text-sm focus:border-[#3B82F6] outline-none text-[#E5E7EB] placeholder:text-[#94A3B8]/30"
-                                            />
+        <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+                <thead>
+                    <tr className="border-b border-[rgba(0,229,255,0.1)]">
+                        <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#94A3B8]">Deployable Module</th>
+                        <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#94A3B8]">System Code</th>
+                        <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#94A3B8]">Deployment Gateway</th>
+                        <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#E6F1FF] text-right">Metrics</th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-[rgba(255,255,255,0.03)]">
+                    {products.map((product) => (
+                        <tr key={product.id} className="group hover:bg-[rgba(0,229,255,0.02)] transition-colors">
+                            <td className="px-8 py-8">
+                                <div className="flex items-center gap-5">
+                                    <div className="w-12 h-12 rounded-2xl bg-[#070B14] border border-[rgba(0,229,255,0.1)] flex items-center justify-center text-[#00E5FF] group-hover:border-[#00E5FF]/40 transition-all shadow-[inset_0_0_15px_rgba(0,229,255,0.05)]">
+                                        <Cpu size={24} />
+                                    </div>
+                                    <div>
+                                        <p className="text-white font-black uppercase tracking-tight text-base group-hover:text-[#00E5FF] transition-colors">{product.name}</p>
+                                        <p className="text-[10px] text-[#94A3B8] font-bold tracking-widest mt-1">VAL: ${product.price} USD</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td className="px-8 py-8">
+                                <code className="text-[11px] font-mono font-bold text-[#00E5FF]/70 bg-[#00E5FF]/5 px-3 py-1.5 rounded-lg border border-[#00E5FF]/10 flex items-center gap-2 w-fit">
+                                    <Database size={12} />
+                                    {product.id.split('-')[0].toUpperCase()}
+                                </code>
+                            </td>
+                            <td className="px-8 py-8">
+                                {editingId === product.id ? (
+                                    <div className="flex items-center gap-3">
+                                        <input
+                                            type="text"
+                                            value={editUrl}
+                                            onChange={(e) => setEditUrl(e.target.value)}
+                                            className="bg-[#070B14] border border-[#00E5FF] rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-[#00E5FF]/20 outline-none w-64"
+                                            placeholder="https://..."
+                                        />
+                                        <button
+                                            onClick={() => handleUpdateUrl(product.id)}
+                                            disabled={updating}
+                                            className="p-2 bg-emerald-500/20 text-emerald-500 rounded-lg hover:bg-emerald-500/30 transition-all"
+                                        >
+                                            {updating ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+                                        </button>
+                                        <button
+                                            onClick={() => setEditingId(null)}
+                                            className="p-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500/30 transition-all"
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-4 group/url">
+                                        <div className="flex items-center gap-2 text-xs font-bold text-[#94A3B8] max-w-[200px] truncate">
+                                            <Globe size={14} className="text-[#00E5FF]/40" />
+                                            {product.access_url || 'N/A'}
                                         </div>
-                                    ) : (
-                                        <div className="flex items-center gap-2 group/url">
-                                            <Globe size={14} className="text-[#94A3B8]" />
-                                            <span className="text-[#94A3B8] text-sm italic truncate block max-w-xs group-hover/url:text-[#E5E7EB] transition-colors">
-                                                {product.access_url || 'Endpoint not configured'}
-                                            </span>
-                                        </div>
-                                    )}
-                                </td>
-                                <td className="px-8 py-5 text-right">
-                                    {editingId === product.id ? (
-                                        <div className="flex items-center justify-end gap-3">
-                                            <button
-                                                onClick={() => handleSave(product.id)}
-                                                disabled={loading}
-                                                className="p-2.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 rounded-xl transition-all border border-emerald-500/20 disabled:opacity-50"
-                                                title="Save Changes"
-                                            >
-                                                {loading ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                                            </button>
-                                            <button
-                                                onClick={() => setEditingId(null)}
-                                                className="p-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-xl transition-all border border-red-500/20"
-                                                title="Cancel"
-                                            >
-                                                <X size={18} />
-                                            </button>
-                                        </div>
-                                    ) : (
                                         <button
                                             onClick={() => {
-                                                setEditingId(product.id)
-                                                setUrl(product.access_url || '')
+                                                setEditingId(product.id);
+                                                setEditUrl(product.access_url || '');
                                             }}
-                                            className="p-2.5 bg-[#0F172A] hover:bg-[#1E293B] text-[#94A3B8] hover:text-white rounded-xl transition-all border border-[#1E293B]"
-                                            title="Edit Asset"
+                                            className="p-1.5 glass-panel border-[rgba(0,229,255,0.1)] text-[#94A3B8] hover:text-[#00E5FF] transition-all opacity-0 group-hover/url:opacity-100"
                                         >
-                                            <Edit2 size={18} />
+                                            <Edit2 size={12} />
                                         </button>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            <div className="px-8 py-4 bg-[#0B1220]/50 border-t border-[#1E293B]">
-                <p className="text-[10px] text-[#94A3B8] uppercase tracking-widest font-black flex items-center gap-2">
-                    <ShieldCheck size={12} className="text-blue-500" />
-                    Asset verification protocols active
-                </p>
-            </div>
+                                    </div>
+                                )}
+                            </td>
+                            <td className="px-8 py-8 text-right">
+                                <div className="flex flex-col items-end gap-2">
+                                    <div className="flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase tracking-widest">
+                                        <ShieldCheck size={14} />
+                                        Verified System
+                                    </div>
+                                    <div className="flex items-center gap-2 text-[#94A3B8] text-[9px] font-black uppercase tracking-widest">
+                                        <Activity size={12} />
+                                        Performance: Optimal
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
-    )
-}
-
-function ShieldCheck(props: any) {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
-            <path d="m9 12 2 2 4-4" />
-        </svg>
-    )
+    );
 }

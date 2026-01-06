@@ -1,96 +1,67 @@
+import Link from "next/link";
+import { Zap, ArrowLeft, ShieldCheck, Eye } from "lucide-react";
+
 export default function PrivacyPolicyPage() {
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <h1 className="text-4xl font-bold mb-8">Privacy Policy</h1>
+        <div className="min-h-screen bg-[#070B14] text-[#E6F1FF] flex flex-col items-center justify-start px-4 py-20 relative overflow-hidden">
+            {/* Background Effects */}
+            <div className="fixed inset-0 pointer-events-none">
+                <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-[#00E5FF]/5 blur-[150px] rounded-full" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-600/5 blur-[150px] rounded-full" />
+            </div>
 
-                <div className="prose prose-invert max-w-none space-y-6 text-slate-300">
-                    <section>
-                        <h2 className="text-2xl font-bold text-white mb-4">1. Information We Collect</h2>
-                        <p>
-                            We collect information you provide directly to us, such as when you create an account, subscribe to our service,
-                            or contact us for support.
-                        </p>
-                        <ul className="list-disc pl-6 space-y-2">
-                            <li>Email address</li>
-                            <li>Username</li>
-                            <li>Payment information (processed securely through our payment provider)</li>
-                            <li>Usage data and analytics</li>
-                        </ul>
-                    </section>
+            <div className="w-full max-w-4xl relative z-10">
+                <div className="mb-16">
+                    <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.4em] text-[#94A3B8] hover:text-[#00E5FF] transition-colors group mb-8">
+                        <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+                        Back to Home
+                    </Link>
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="w-12 h-12 bg-[#00E5FF] rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(0,229,255,0.3)]">
+                            <Zap size={24} className="text-[#070B14] fill-current" />
+                        </div>
+                        <h1 className="text-4xl font-black tracking-tighter font-space uppercase italic">Privacy Shield</h1>
+                    </div>
+                </div>
 
+                <div className="glass-panel p-10 neon-border shadow-2xl space-y-12">
                     <section>
-                        <h2 className="text-2xl font-bold text-white mb-4">2. How We Use Your Information</h2>
-                        <p>We use the information we collect to:</p>
-                        <ul className="list-disc pl-6 space-y-2">
-                            <li>Provide, maintain, and improve our services</li>
-                            <li>Process transactions and send related information</li>
-                            <li>Send you technical notices and support messages</li>
-                            <li>Respond to your comments and questions</li>
-                            <li>Monitor and analyze trends and usage</li>
-                        </ul>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-bold text-white mb-4">3. Information Sharing</h2>
-                        <p>
-                            We do not sell, trade, or otherwise transfer your personally identifiable information to third parties.
-                            This does not include trusted third parties who assist us in operating our website, conducting our business,
-                            or servicing you, so long as those parties agree to keep this information confidential.
+                        <h2 className="text-xl font-black uppercase tracking-widest text-[#00E5FF] mb-6 flex items-center gap-3">
+                            <Eye size={20} />
+                            1. Data Cloaking
+                        </h2>
+                        <p className="text-[#94A3B8] leading-relaxed font-medium">
+                            Auto Step utilizes advanced end-to-end encryption for all operator credentials. Your email and username are encrypted at rest and never shared with external nodes or third-party intelligence services.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold text-white mb-4">4. Data Security</h2>
-                        <p>
-                            We implement appropriate security measures to protect your personal information. However, no method of
-                            transmission over the Internet or electronic storage is 100% secure.
+                        <h2 className="text-xl font-black uppercase tracking-widest text-[#00E5FF] mb-6 flex items-center gap-3">
+                            <ShieldCheck size={20} />
+                            2. Transaction Privacy
+                        </h2>
+                        <p className="text-[#94A3B8] leading-relaxed font-medium">
+                            Acquisition logs are anonymized to protect the identity of operators. We only store the minimal data required to verify asset ownership and ensure module delivery across the network.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold text-white mb-4">5. Your Rights</h2>
-                        <p>You have the right to:</p>
-                        <ul className="list-disc pl-6 space-y-2">
-                            <li>Access your personal data</li>
-                            <li>Correct inaccurate data</li>
-                            <li>Request deletion of your data</li>
-                            <li>Object to processing of your data</li>
-                            <li>Export your data</li>
-                        </ul>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-bold text-white mb-4">6. Cookies</h2>
-                        <p>
-                            We use cookies and similar tracking technologies to track activity on our service and hold certain information.
-                            You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent.
+                        <h2 className="text-xl font-black uppercase tracking-widest text-[#00E5FF] mb-6 flex items-center gap-3">
+                            <ShieldCheck size={20} />
+                            3. Protocol Security
+                        </h2>
+                        <p className="text-[#94A3B8] leading-relaxed font-medium">
+                            The Auto Step Privacy Shield is designed to maintain the highest levels of security. We continuously audit our communication tunnels to ensure no leakage of sensitive operational data.
                         </p>
                     </section>
 
-                    <section>
-                        <h2 className="text-2xl font-bold text-white mb-4">7. Changes to This Policy</h2>
-                        <p>
-                            We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new
-                            Privacy Policy on this page and updating the "Last updated" date.
+                    <div className="pt-10 border-t border-[rgba(0,229,255,0.1)] text-center">
+                        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-[#94A3B8]/30">
+                            STRICT PRIVACY PROTOCOL // VERSION_2.0
                         </p>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-bold text-white mb-4">8. Contact Us</h2>
-                        <p>
-                            If you have any questions about this Privacy Policy, please contact us at{' '}
-                            <a href="mailto:support@autostep.app" className="text-blue-400 hover:underline">
-                                support@autostep.app
-                            </a>
-                        </p>
-                    </section>
-
-                    <p className="text-sm text-slate-500 mt-12">
-                        Last updated: {new Date().toLocaleDateString()}
-                    </p>
+                    </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }

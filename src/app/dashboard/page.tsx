@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { logout } from "../auth/actions";
 import Link from "next/link";
 import { AutomationsList } from "./AutomationsList";
-import { Activity, Zap, Shield, LogOut, User, ShoppingBag, Search, ArrowRight } from "lucide-react";
+import { Activity, Zap, Shield, LogOut, User, ShoppingBag, Search, ArrowRight, Grid } from "lucide-react";
 
 export default async function DashboardPage() {
     const supabase = createClient();
@@ -25,44 +25,46 @@ export default async function DashboardPage() {
 
     const metrics = {
         total: automations.length,
-        lastActivity: automations.length > 0 ? new Date(automations[0].created_at).toLocaleString() : 'Never'
+        uptime: "99.98%",
+        status: "OPERATIONAL"
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-[#020617] text-[#E5E7EB]">
-            {/* Header v2 */}
-            <nav className="border-b border-[#1E293B] bg-[#0B1220]/80 backdrop-blur-md sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                    <Link href="/dashboard" className="flex items-center gap-2 group transition-all">
-                        <div className="w-9 h-9 bg-gradient-to-br from-[#3B82F6] to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
-                            <Zap size={20} className="text-white fill-current" />
+        <div className="min-h-screen flex flex-col bg-[#070B14] text-[#E6F1FF]">
+            {/* Nav v2 */}
+            <nav className="relative z-50 px-6 py-6 border-b border-[rgba(0,229,255,0.1)] backdrop-blur-md">
+                <div className="max-w-7xl mx-auto flex justify-between items-center">
+                    <Link href="/dashboard" className="flex items-center gap-3 group">
+                        <div className="w-10 h-10 bg-[#00E5FF] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(0,229,255,0.3)] transition-transform group-hover:scale-110">
+                            <Zap size={22} className="text-[#070B14] fill-current" />
                         </div>
-                        <span className="font-black text-xl tracking-tight">AUTO STEP</span>
+                        <span className="text-xl font-black tracking-tighter text-[#E6F1FF] uppercase font-space">AUTO STEP</span>
                     </Link>
 
                     <div className="flex items-center gap-6">
-                        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-[#0F172A] border border-[#1E293B] rounded-full text-xs font-bold text-[#94A3B8]">
-                            <User size={14} className="text-blue-500" />
-                            <span>{profile?.username}</span>
-                        </div>
+                        <Link href="/dashboard" className="hidden lg:flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#00E5FF]">
+                            <Grid size={14} />
+                            Console
+                        </Link>
+                        <Link href="/products" className="hidden lg:flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#94A3B8] hover:text-[#00E5FF]">
+                            <ShoppingBag size={14} />
+                            Marketplace
+                        </Link>
 
-                        <div className="flex items-center gap-3">
+                        <div className="h-4 w-px bg-white/10 hidden lg:block" />
+
+                        <div className="flex items-center gap-4">
                             {profile?.role === "admin" && (
-                                <Link
-                                    href="/admin"
-                                    className="p-2 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 rounded-xl transition-all border border-amber-500/20"
-                                    title="Admin Console"
-                                >
-                                    <Shield size={20} />
+                                <Link href="/admin" className="p-2.5 glass-panel neon-border text-amber-500 hover:scale-105 transition-transform">
+                                    <Shield size={18} />
                                 </Link>
                             )}
+                            <Link href="/account" className="p-2.5 glass-panel neon-border text-[#00E5FF] hover:scale-105 transition-transform">
+                                <User size={18} />
+                            </Link>
                             <form action={logout}>
-                                <button
-                                    type="submit"
-                                    className="p-2 text-[#94A3B8] hover:text-white hover:bg-red-500/10 rounded-xl transition-all group"
-                                    title="Logout"
-                                >
-                                    <LogOut size={20} className="group-hover:translate-x-0.5 transition-transform" />
+                                <button type="submit" className="p-2.5 glass-panel neon-border text-red-500 hover:bg-red-500/10 transition-all">
+                                    <LogOut size={18} />
                                 </button>
                             </form>
                         </div>
@@ -70,66 +72,72 @@ export default async function DashboardPage() {
                 </div>
             </nav>
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-                {/* Greeting Section */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16">
+            <main className="max-w-7xl mx-auto px-6 py-12 w-full relative z-10">
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16">
                     <div>
-                        <h1 className="text-4xl md:text-5xl font-black mb-3">Hello, {profile?.username || 'User'}!</h1>
-                        <p className="text-[#94A3B8] text-lg">Manage your premium automation assets from one place.</p>
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-pulse" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500">System Ready</span>
+                        </div>
+                        <h1 className="text-5xl md:text-6xl font-black tracking-tighter font-space uppercase">Hello, {profile?.username}</h1>
+                        <p className="text-[#94A3B8] text-lg mt-2 font-medium">Command center for your automation assets.</p>
                     </div>
 
-                    <Link
-                        href="/products"
-                        className="btn-primary flex items-center gap-3 group"
-                    >
-                        <ShoppingBag size={20} />
-                        Browse Marketplace
+                    <Link href="/products" className="btn-primary flex items-center gap-3 group shadow-[0_0_30px_rgba(0,229,255,0.2)]">
+                        Acquire New Assets
                         <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>
 
+                {/* Metrics Bar */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+                    <div className="glass-panel p-6 neon-border bg-gradient-to-br from-[#0A1020] to-transparent">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#94A3B8] mb-1">Active Assets</p>
+                        <p className="text-3xl font-black text-[#00E5FF]">{metrics.total}</p>
+                    </div>
+                    <div className="glass-panel p-6 neon-border bg-gradient-to-br from-[#0A1020] to-transparent">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#94A3B8] mb-1">System Uptime</p>
+                        <p className="text-3xl font-black text-[#E6F1FF]">{metrics.uptime}</p>
+                    </div>
+                    <div className="glass-panel p-6 neon-border bg-gradient-to-br from-[#0A1020] to-transparent">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#94A3B8] mb-1">Security Rank</p>
+                        <p className="text-3xl font-black text-[#E6F1FF]">Elite</p>
+                    </div>
+                    <div className="glass-panel p-6 neon-border bg-gradient-to-br from-[#0A1020] to-transparent">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#94A3B8] mb-1">Auth Level</p>
+                        <p className="text-2xl font-black text-emerald-500">{metrics.status}</p>
+                    </div>
+                </div>
+
                 <div className="grid lg:grid-cols-12 gap-12">
                     {/* Main Content Area */}
-                    <div className="lg:col-span-8 space-y-12">
-                        <div className="premium-surface p-1">
+                    <div className="lg:col-span-12">
+                        <div className="flex items-center justify-between mb-8 px-2">
+                            <h2 className="text-2xl font-black tracking-tight uppercase font-space flex items-center gap-3">
+                                <Activity className="text-[#00E5FF]" size={24} />
+                                Asset Management
+                            </h2>
+                        </div>
+                        <div className="glass-panel p-2 neon-border">
                             <AutomationsList initialAutomations={automations} isAdmin={profile?.role === 'admin'} />
                         </div>
                     </div>
+                </div>
 
-                    {/* Sidebar / Info */}
-                    <div className="lg:col-span-4 space-y-8">
-                        <div className="premium-card p-8">
-                            <div className="flex items-center gap-3 mb-6">
-                                <Activity size={24} className="text-blue-500" />
-                                <h2 className="font-bold text-lg">Activity Metrics</h2>
-                            </div>
+                {/* Marketplace Invitation */}
+                <div className="mt-20 glass-panel p-10 neon-border flex flex-col md:flex-row items-center justify-between gap-8 bg-gradient-to-r from-[#0A1020] to-transparent overflow-hidden relative">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-[#00E5FF]/5 blur-[80px] rounded-full -mr-32 -mt-32" />
 
-                            <div className="space-y-6">
-                                <div>
-                                    <p className="text-[#94A3B8] text-sm mb-1 uppercase tracking-widest font-bold">Active Assets</p>
-                                    <p className="text-4xl font-black text-white">{metrics.total}</p>
-                                </div>
-                                <div className="pt-6 border-t border-[#1E293B]">
-                                    <p className="text-[#94A3B8] text-sm mb-1 uppercase tracking-widest font-bold">Last Sync</p>
-                                    <p className="text-sm font-mono text-blue-400">{metrics.lastActivity}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="premium-surface p-8 bg-gradient-to-br from-[#0B1220] to-[#020617]">
-                            <h3 className="font-bold mb-4 flex items-center gap-2">
-                                <Search size={18} className="text-blue-500" />
-                                Find something else?
-                            </h3>
-                            <p className="text-sm text-[#94A3B8] leading-relaxed mb-6">
-                                Looking for a specific automation code? Search our global marketplace to find the perfect fit.
-                            </p>
-                            <Link href="/products" className="text-sm font-bold text-blue-500 hover:text-blue-400 flex items-center gap-2 group transition-colors">
-                                Marketplace Search
-                                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                            </Link>
-                        </div>
+                    <div className="relative z-10 text-center md:text-left">
+                        <h3 className="text-3xl font-black mb-2 uppercase font-space italic tracking-tight">Expand Your Network</h3>
+                        <p className="text-[#94A3B8] max-w-md">Discover ultra-high performance automation modules in the global marketplace.</p>
                     </div>
+
+                    <Link href="/products" className="btn-secondary px-10 relative z-10 group">
+                        Enter Marketplace
+                        <ArrowRight size={18} className="inline-block ml-3 group-hover:translate-x-1 transition-transform" />
+                    </Link>
                 </div>
             </main>
         </div>

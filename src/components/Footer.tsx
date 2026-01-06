@@ -1,95 +1,76 @@
-import Link from 'next/link'
-import { Mail, Zap, ShieldCheck, Cpu } from 'lucide-react'
+import Link from "next/link";
+import { Zap, Mail, ShieldAlert, Cpu } from "lucide-react";
 
 export function Footer() {
     return (
-        <footer className="border-t border-[#1E293B] bg-[#0B1220]/50 mt-auto relative overflow-hidden">
-            <div className="max-w-7xl mx-auto px-6 sm:px-8 py-16 relative z-10">
-                <div className="grid md:grid-cols-4 gap-12 lg:gap-20">
-                    {/* Brand */}
-                    <div className="md:col-span-1">
-                        <Link href="/" className="flex items-center gap-3 mb-6 group">
-                            <div className="w-8 h-8 bg-gradient-to-br from-[#3B82F6] to-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
-                                <Zap size={16} className="text-white fill-current" />
+        <footer className="relative mt-auto pt-24 pb-12 overflow-hidden">
+            {/* Top Border Glow */}
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[rgba(0,229,255,0.3)] to-transparent" />
+
+            <div className="max-w-7xl mx-auto px-6 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-16 mb-20">
+                    <div className="md:col-span-4">
+                        <div className="flex items-center gap-3 group mb-8">
+                            <div className="w-10 h-10 bg-[#00E5FF] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(0,229,255,0.3)]">
+                                <Zap size={22} className="text-[#070B14] fill-current" />
                             </div>
-                            <span className="text-lg font-black tracking-tight text-[#E5E7EB]">AUTO STEP</span>
-                        </Link>
-                        <p className="text-[#94A3B8] text-sm leading-relaxed mb-8">
-                            Premium marketplace for battle-tested automation assets and digital products.
+                            <span className="text-2xl font-black tracking-tighter text-[#E6F1FF] uppercase font-space">AUTO STEP</span>
+                        </div>
+                        <p className="text-[#94A3B8] text-sm leading-relaxed max-w-sm mb-10">
+                            The world&apos;s most advanced marketplace for production-ready automation modules. Pure ownership. Pure performance.
                         </p>
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-[#0F172A] border border-[#1E293B] rounded-lg">
-                                <ShieldCheck size={18} className="text-blue-500" />
-                            </div>
-                            <div className="p-2 bg-[#0F172A] border border-[#1E293B] rounded-lg">
-                                <Cpu size={18} className="text-emerald-500" />
-                            </div>
+                        <div className="flex items-center gap-4">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                            <span className="text-[10px] font-black text-[#E6F1FF] uppercase tracking-[0.4em]">All Systems Nominal</span>
                         </div>
                     </div>
 
-                    {/* Navigation */}
-                    <div>
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.25em] text-[#E5E7EB] mb-6">Marketplace</h4>
-                        <ul className="space-y-4 text-sm font-bold">
-                            <li>
-                                <Link href="/products" className="text-[#94A3B8] hover:text-white transition-colors">
-                                    All Automations
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/dashboard" className="text-[#94A3B8] hover:text-white transition-colors">
-                                    My Assets
-                                </Link>
-                            </li>
+                    <div className="md:col-span-2">
+                        <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#E6F1FF] mb-8">Marketplace</h4>
+                        <ul className="space-y-4">
+                            <li><Link href="/products" className="text-sm text-[#94A3B8] hover:text-[#00E5FF] transition-colors">All Modules</Link></li>
+                            <li><Link href="/dashboard" className="text-sm text-[#94A3B8] hover:text-[#00E5FF] transition-colors">My Assets</Link></li>
+                            <li><Link href="/" className="text-sm text-[#94A3B8] hover:text-[#00E5FF] transition-colors">Recent Releases</Link></li>
                         </ul>
                     </div>
 
-                    {/* Legal */}
-                    <div>
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.25em] text-[#E5E7EB] mb-6">Legal Protocols</h4>
-                        <ul className="space-y-4 text-sm font-bold">
-                            <li>
-                                <Link href="/privacy-policy" className="text-[#94A3B8] hover:text-white transition-colors">
-                                    Privacy Policy
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/terms" className="text-[#94A3B8] hover:text-white transition-colors">
-                                    Terms of Operation
-                                </Link>
-                            </li>
+                    <div className="md:col-span-2">
+                        <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#E6F1FF] mb-8">Protocols</h4>
+                        <ul className="space-y-4">
+                            <li><Link href="/terms" className="text-sm text-[#94A3B8] hover:text-[#00E5FF] transition-colors">Operating Terms</Link></li>
+                            <li><Link href="/privacy-policy" className="text-sm text-[#94A3B8] hover:text-[#00E5FF] transition-colors">Privacy Shield</Link></li>
+                            <li><Link href="/" className="text-sm text-[#94A3B8] hover:text-[#00E5FF] transition-colors">SLAs</Link></li>
                         </ul>
                     </div>
 
-                    {/* Support */}
-                    <div>
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.25em] text-[#E5E7EB] mb-6">Direct Support</h4>
-                        <a
-                            href="mailto:support@autostep.app"
-                            className="bg-[#0F172A] border border-[#1E293B] p-4 rounded-2xl flex items-center gap-3 group hover:border-blue-500/30 transition-all"
-                        >
-                            <div className="p-2.5 bg-blue-500/10 rounded-xl text-blue-500 group-hover:scale-105 transition-transform">
-                                <Mail size={18} />
-                            </div>
-                            <span className="text-sm font-bold text-[#E5E7EB] group-hover:text-blue-400 transition-colors">
-                                support@autostep.app
-                            </span>
-                        </a>
+                    <div className="md:col-span-4">
+                        <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#E6F1FF] mb-8">Communication Tunnel</h4>
+                        <div className="glass-panel p-6 neon-border bg-gradient-to-br from-[#0A1020] to-transparent">
+                            <p className="text-[#94A3B8] text-xs mb-6">Connect with our core system architects for custom automation requests.</p>
+                            <Link href="mailto:architect@autostep.io" className="flex items-center gap-3 py-3 px-6 glass-panel border-[rgba(0,229,255,0.1)] text-[#00E5FF] group hover:border-[#00E5FF]/40 transition-all">
+                                <Mail size={16} />
+                                <span className="text-[10px] font-black uppercase tracking-widest">architect@autostep.io</span>
+                            </Link>
+                        </div>
                     </div>
                 </div>
 
-                <div className="mt-20 pt-8 border-t border-[#1E293B] flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-black uppercase tracking-widest text-[#94A3B8]/50">
-                    <p>&copy; {new Date().getFullYear()} AUTO STEP • ALL PROTOCOLS VERIFIED</p>
-                    <div className="flex items-center gap-4">
-                        <span className="flex items-center gap-1.5">
-                            <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                            System Active
-                        </span>
-                        <span className="w-px h-3 bg-[#1E293B]" />
-                        <span>v2.0.4 Premium</span>
+                <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-[rgba(255,255,255,0.03)] gap-6">
+                    <p className="text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.4em]">
+                        &copy; {new Date().getFullYear()} AUTO STEP // GLOBAL_NETWORK_DISTRIBUTION
+                    </p>
+                    <div className="flex items-center gap-8">
+                        <div className="flex items-center gap-2 group cursor-pointer">
+                            <ShieldAlert size={14} className="text-[#94A3B8] group-hover:text-amber-500 transition-colors" />
+                            <span className="text-[9px] font-black text-[#94A3B8] uppercase tracking-widest group-hover:text-white transition-colors">Security Audit Passed</span>
+                        </div>
+                        <div className="flex items-center gap-2 group cursor-pointer">
+                            <Cpu size={14} className="text-[#94A3B8] group-hover:text-[#00E5FF] transition-colors" />
+                            <span className="text-[9px] font-black text-[#94A3B8] uppercase tracking-widest group-hover:text-white transition-colors">v1.2.9_STABLE</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </footer>
-    )
+    );
 }

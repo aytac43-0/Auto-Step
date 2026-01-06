@@ -1,64 +1,67 @@
+import Link from "next/link";
+import { Zap, ArrowLeft, Shield } from "lucide-react";
+
 export default function TermsPage() {
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <h1 className="text-4xl font-bold mb-8">Terms of Service</h1>
+        <div className="min-h-screen bg-[#070B14] text-[#E6F1FF] flex flex-col items-center justify-start px-4 py-20 relative overflow-hidden">
+            {/* Background Effects */}
+            <div className="fixed inset-0 pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-[#00E5FF]/5 blur-[150px] rounded-full" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-600/5 blur-[150px] rounded-full" />
+            </div>
 
-                <div className="prose prose-invert max-w-none space-y-6 text-slate-300">
+            <div className="w-full max-w-4xl relative z-10">
+                <div className="mb-16">
+                    <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.4em] text-[#94A3B8] hover:text-[#00E5FF] transition-colors group mb-8">
+                        <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+                        Back to Home
+                    </Link>
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="w-12 h-12 bg-[#00E5FF] rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(0,229,255,0.3)]">
+                            <Zap size={24} className="text-[#070B14] fill-current" />
+                        </div>
+                        <h1 className="text-4xl font-black tracking-tighter font-space uppercase italic">Terms of Operation</h1>
+                    </div>
+                </div>
+
+                <div className="glass-panel p-10 neon-border shadow-2xl space-y-12">
                     <section>
-                        <h2 className="text-2xl font-bold text-white mb-4">1. Acceptance of Terms</h2>
-                        <p>
-                            By accessing and using Auto Step, you accept and agree to be bound by the terms and provision of this agreement.
+                        <h2 className="text-xl font-black uppercase tracking-widest text-[#00E5FF] mb-6 flex items-center gap-3">
+                            <Shield size={20} />
+                            1. Operational License
+                        </h2>
+                        <p className="text-[#94A3B8] leading-relaxed font-medium">
+                            By accessing the Auto Step platform, you are granted a professional operator license to acquire and deploy automation modules. These modules are delivered as finished assets for personal or enterprise use within the parameters of this protocol.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold text-white mb-4">2. Use License</h2>
-                        <p>
-                            Permission is granted to temporarily access the materials (information or software) on Auto Step for personal,
-                            non-commercial transitory viewing only.
+                        <h2 className="text-xl font-black uppercase tracking-widest text-[#00E5FF] mb-6 flex items-center gap-3">
+                            <Shield size={20} />
+                            2. Ownership & Assets
+                        </h2>
+                        <p className="text-[#94A3B8] leading-relaxed font-medium">
+                            All acquired automations are licensed to the operator handle. Re-distribution or decryption of module source codes without explicit authorization from the system architects is strictly prohibited.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold text-white mb-4">3. Disclaimer</h2>
-                        <p>
-                            The materials on Auto Step are provided on an 'as is' basis. Auto Step makes no warranties, expressed or implied,
-                            and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions
-                            of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
+                        <h2 className="text-xl font-black uppercase tracking-widest text-[#00E5FF] mb-6 flex items-center gap-3">
+                            <Shield size={20} />
+                            3. System Integrity
+                        </h2>
+                        <p className="text-[#94A3B8] leading-relaxed font-medium">
+                            Operators must maintain the integrity of the global network. Any attempt to compromise the marketplace nodes or forge acquisition logs will result in immediate termination of access and blacklisting of the operator ID.
                         </p>
                     </section>
 
-                    <section>
-                        <h2 className="text-2xl font-bold text-white mb-4">4. Limitations</h2>
-                        <p>
-                            In no event shall Auto Step or its suppliers be liable for any damages (including, without limitation, damages for
-                            loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Auto Step.
+                    <div className="pt-10 border-t border-[rgba(0,229,255,0.1)] text-center">
+                        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-[#94A3B8]/30">
+                            LAST REVISION: 2026.01.06 // PROTOCOL_V2
                         </p>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-bold text-white mb-4">5. Subscription Terms</h2>
-                        <p>
-                            Subscriptions are billed on a recurring basis. You may cancel your subscription at any time. Refunds are subject to our refund policy.
-                        </p>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-bold text-white mb-4">6. Contact</h2>
-                        <p>
-                            If you have any questions about these Terms, please contact us at{' '}
-                            <a href="mailto:support@autostep.app" className="text-blue-400 hover:underline">
-                                support@autostep.app
-                            </a>
-                        </p>
-                    </section>
-
-                    <p className="text-sm text-slate-500 mt-12">
-                        Last updated: {new Date().toLocaleDateString()}
-                    </p>
+                    </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }

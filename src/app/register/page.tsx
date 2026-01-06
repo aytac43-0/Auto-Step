@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { signup } from '../auth/actions';
-import { Eye, EyeOff, Zap, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, Zap, ShieldCheck } from 'lucide-react';
 
 export default function RegisterPage({
     searchParams,
@@ -14,58 +14,61 @@ export default function RegisterPage({
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     return (
-        <div className="min-h-screen bg-[#020617] text-[#E5E7EB] flex flex-col items-center justify-center px-4 py-20 relative overflow-hidden">
-            {/* Background Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-600/5 blur-[120px] pointer-events-none" />
+        <div className="min-h-screen bg-[#070B14] text-[#E6F1FF] flex flex-col items-center justify-center px-4 py-20 relative overflow-hidden">
+            {/* Background Accents */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none">
+                <div className="absolute top-[10%] right-[-10%] w-[600px] h-[600px] bg-[#00E5FF]/5 blur-[140px] rounded-full" />
+                <div className="absolute bottom-[10%] left-[-10%] w-[600px] h-[600px] bg-blue-600/5 blur-[140px] rounded-full" />
+            </div>
 
             <div className="w-full max-w-md relative z-10">
-                <Link href="/" className="flex items-center gap-3 mb-10 justify-center group">
-                    <div className="w-10 h-10 bg-gradient-to-br from-[#3B82F6] to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
-                        <Zap size={22} className="text-white fill-current" />
-                    </div>
-                    <span className="text-2xl font-black tracking-tight uppercase">Auto Step</span>
-                </Link>
+                <div className="text-center mb-10">
+                    <Link href="/" className="inline-flex items-center gap-3 group mb-8">
+                        <div className="w-12 h-12 bg-[#00E5FF] rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(0,229,255,0.4)] transition-transform group-hover:scale-110">
+                            <Zap size={24} className="text-[#070B14] fill-current" />
+                        </div>
+                    </Link>
+                    <h1 className="text-4xl font-black tracking-tight font-space uppercase">Initialize Account</h1>
+                    <p className="text-[#94A3B8] font-medium mt-2">Become a verified marketplace operator.</p>
+                </div>
 
-                <div className="premium-surface p-8 md:p-10 border-[#1E293B] bg-[#0B1220]/50 backdrop-blur-xl shadow-2xl shadow-black/50">
-                    <h1 className="text-3xl font-black mb-2 tracking-tight">Operator Setup</h1>
-                    <p className="text-[#94A3B8] mb-10 text-sm font-medium">Initialize your account to start acquiring assets.</p>
-
+                <div className="glass-panel p-8 md:p-10 neon-border shadow-2xl">
                     <form action={signup} className="space-y-5">
                         {searchParams.error && (
-                            <div className="p-4 bg-red-500/5 border border-red-500/20 text-red-500 text-xs font-bold uppercase tracking-widest rounded-xl mb-6">
-                                {searchParams.error}
+                            <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-black uppercase tracking-widest rounded-xl text-center">
+                                Initialization Failed: {searchParams.error}
                             </div>
                         )}
 
-                        <div>
-                            <label className="block text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.2em] mb-2 ml-1">
-                                Display Name
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#94A3B8] ml-1">
+                                Operator handle
                             </label>
                             <input
                                 name="username"
                                 type="text"
                                 required
-                                className="w-full px-5 py-4 bg-[#020617] border border-[#1E293B] rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-[#3B82F6] outline-none transition-all placeholder:text-[#94A3B8]/20 text-white font-medium"
-                                placeholder="johndoe"
+                                className="input-neon"
+                                placeholder="cyber_phantom"
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.2em] mb-2 ml-1">
-                                Email Address
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#94A3B8] ml-1">
+                                Secure email
                             </label>
                             <input
                                 name="email"
                                 type="email"
                                 required
-                                className="w-full px-5 py-4 bg-[#020617] border border-[#1E293B] rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-[#3B82F6] outline-none transition-all placeholder:text-[#94A3B8]/20 text-white font-medium"
-                                placeholder="name@enterprise.com"
+                                className="input-neon"
+                                placeholder="operator@autostep.io"
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.2em] mb-2 ml-1">
-                                Secure Key
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#94A3B8] ml-1">
+                                Primary access key
                             </label>
                             <div className="relative">
                                 <input
@@ -73,22 +76,22 @@ export default function RegisterPage({
                                     type={showPassword ? "text" : "password"}
                                     required
                                     minLength={6}
-                                    className="w-full px-5 py-4 bg-[#020617] border border-[#1E293B] rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-[#3B82F6] outline-none transition-all placeholder:text-[#94A3B8]/20 text-white font-medium"
+                                    className="input-neon"
                                     placeholder="••••••••"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-white transition-colors"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#00E5FF] transition-colors"
                                 >
                                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.2em] mb-2 ml-1">
-                                Verify Key
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#94A3B8] ml-1">
+                                Confirm access key
                             </label>
                             <div className="relative">
                                 <input
@@ -96,13 +99,13 @@ export default function RegisterPage({
                                     type={showConfirmPassword ? "text" : "password"}
                                     required
                                     minLength={6}
-                                    className="w-full px-5 py-4 bg-[#020617] border border-[#1E293B] rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-[#3B82F6] outline-none transition-all placeholder:text-[#94A3B8]/20 text-white font-medium"
+                                    className="input-neon"
                                     placeholder="••••••••"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-white transition-colors"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#00E5FF] transition-colors"
                                 >
                                     {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
@@ -115,42 +118,32 @@ export default function RegisterPage({
                                 name="acceptTerms"
                                 type="checkbox"
                                 required
-                                className="mt-1 w-5 h-5 rounded-lg border-[#1E293B] bg-[#020617] text-blue-500 focus:ring-blue-500/20"
+                                className="mt-1 w-5 h-5 rounded-lg border-[rgba(0,229,255,0.2)] bg-[#070B14] text-[#00E5FF] focus:ring-[#00E5FF]"
                             />
                             <label htmlFor="acceptTerms" className="text-xs text-[#94A3B8] leading-relaxed">
-                                I confirm verification of the{" "}
-                                <Link href="/privacy-policy" className="text-white font-bold hover:underline">
-                                    Privacy Protocols
-                                </Link>{" "}
-                                and{" "}
-                                <Link href="/terms" className="text-white font-bold hover:underline">
-                                    Terms of Operation
-                                </Link>
+                                I verify reading the <Link href="/privacy-policy" className="text-[#00E5FF] hover:underline font-bold">Privacy Protocols</Link> and <Link href="/terms" className="text-[#00E5FF] hover:underline font-bold">Terms of Operation</Link>.
                             </label>
                         </div>
 
-                        <button
-                            type="submit"
-                            className="w-full btn-primary !rounded-2xl shadow-blue-500/20"
-                        >
-                            Establish Account
+                        <button type="submit" className="btn-primary w-full shadow-[0_0_30px_rgba(0,229,255,0.2)]">
+                            Initialize Account
                         </button>
                     </form>
 
-                    <div className="mt-10 pt-8 border-t border-[#1E293B] text-center">
-                        <p className="text-[#94A3B8] text-xs font-medium">
-                            Already an operator?{" "}
-                            <Link href="/login" className="text-white font-black hover:text-blue-400 transition-colors">
-                                Authenticate Here
+                    <div className="mt-10 pt-8 border-t border-[rgba(0,229,255,0.1)] text-center">
+                        <p className="text-[#94A3B8] text-sm font-medium">
+                            Already identified?{" "}
+                            <Link href="/login" className="text-[#00E5FF] font-black uppercase tracking-widest hover:underline ml-1">
+                                Login Here
                             </Link>
                         </p>
                     </div>
                 </div>
 
-                <Link href="/" className="mt-12 flex items-center justify-center gap-2 text-[#94A3B8] hover:text-white transition-colors text-xs font-black uppercase tracking-[0.2em] group">
-                    <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-                    System Exit
-                </Link>
+                <div className="mt-12 text-center text-[10px] font-black uppercase tracking-[0.4em] text-[#94A3B8]/30 flex items-center justify-center gap-2">
+                    <ShieldCheck size={14} />
+                    Secure Initialization Protocol
+                </div>
             </div>
         </div>
     );

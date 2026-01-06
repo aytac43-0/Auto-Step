@@ -47,20 +47,25 @@ export default async function DashboardPage() {
                         <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-lg group-hover:scale-110 transition-transform" />
                         <span className="font-bold text-xl">Auto Step</span>
                     </Link>
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-4">
+                        <Link
+                            href="/account"
+                            className="px-4 py-2 text-slate-300 hover:text-white transition-colors"
+                        >
+                            Account
+                        </Link>
                         {profile?.role === "admin" && (
                             <Link
                                 href="/admin"
-                                className="flex items-center gap-2 text-sm text-amber-500 hover:text-amber-400 transition-colors"
+                                className="px-4 py-2 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 rounded-lg transition-colors"
                             >
-                                <Shield size={16} />
                                 Admin Panel
                             </Link>
                         )}
                         <form action={logout}>
                             <button
                                 type="submit"
-                                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors"
+                                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-colors"
                             >
                                 Logout
                             </button>

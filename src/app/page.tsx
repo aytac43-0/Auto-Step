@@ -59,7 +59,7 @@ export default function Home() {
               Get Started
             </Link>
             <Link
-              href="/login"
+              href="/contact"
               className="w-full sm:w-auto px-8 py-4 bg-slate-900 text-white font-semibold rounded-full border border-slate-800 hover:bg-slate-800 transition-colors duration-200 text-center"
             >
               Contact Us

@@ -49,11 +49,7 @@ export default function DashboardPage() {
     }, [supabase, router]);
 
     if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="animate-spin text-cyan-400/40" size={48} />
-            </div>
-        );
+        return <div className="min-h-screen" />;
     }
 
     if (!profile) return null;

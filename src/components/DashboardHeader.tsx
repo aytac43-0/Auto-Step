@@ -1,12 +1,31 @@
+'use client';
+
 import Link from "next/link";
 import { Shield, LayoutDashboard, ShoppingBag, ShieldAlert } from "lucide-react";
 import { LogoutButton } from "./LogoutButton";
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 
-type Props = {
-    role: 'user' | 'admin'
-}
+export default function DashboardHeader() {
+    const supabase = createClient();
+    const [role, setRole] = useState<'user' | 'admin' | null>(null);
 
-export default function DashboardHeader({ role }: Props) {
+    useEffect(() => {
+        async function getRole() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const { data } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('user_id', user.id)
+                .single();
+
+            if (data) setRole(data.role as 'user' | 'admin');
+        }
+        getRole();
+    }, [supabase]);
+
     return (
         <nav className="fixed top-0 w-full z-[100] border-b border-white/5 bg-[#0A0F1A]/80 backdrop-blur-md">
             <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">

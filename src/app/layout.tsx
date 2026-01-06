@@ -25,7 +25,6 @@ export default function RootLayout({
         <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-blue-900/5 to-transparent pointer-events-none z-0" />
 
         <div className="relative z-10 flex flex-col min-h-screen">
-          <Header />
           {children}
           <Footer />
         </div>

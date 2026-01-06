@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { getCurrentProfile } from "@/lib/getCurrentProfile";
 import { redirect } from "next/navigation";
 import { AutomationsList } from "./AutomationsList";
 import Link from "next/link";
@@ -15,18 +15,11 @@ import {
 } from "lucide-react";
 
 export default async function DashboardPage() {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const profile = await getCurrentProfile();
 
-    if (!user) return redirect("/login");
+    if (!profile) return redirect("/login");
 
-    const { data: profile } = await supabase
-        .from("profiles")
-        .select("username, role")
-        .eq("user_id", user.id)
-        .single();
-
-    const username = profile?.username || 'User';
+    const username = profile.username || 'User';
 
     return (
         <div className="min-h-screen flex flex-col pt-20">

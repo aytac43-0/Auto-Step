@@ -3,8 +3,11 @@
 import { signup } from '@/app/auth/actions'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
-export default function RegisterPage() {
+export const dynamic = 'force-dynamic'
+
+function RegisterForm() {
     const searchParams = useSearchParams()
     const message = searchParams.get('message')
 
@@ -89,5 +92,13 @@ export default function RegisterPage() {
                 </form>
             </div>
         </div>
+    )
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <RegisterForm />
+        </Suspense>
     )
 }

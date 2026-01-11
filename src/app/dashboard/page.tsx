@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
+export const dynamic = 'force-dynamic'
+
 // Define types locally or import
 type Profile = {
     username: string | null

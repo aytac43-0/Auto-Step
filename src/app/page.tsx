@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Footer } from "@/components/footer";
 import Nav from "@/components/nav";
 import { CheckCircle2, ShieldCheck, Zap } from "lucide-react";
 
@@ -77,6 +78,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <Footer />
     </main>
   );
 }

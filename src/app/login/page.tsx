@@ -27,7 +27,8 @@ function LoginForm() {
                 toast.success('Welcome back! Redirecting...')
                 // Immediate hard redirect as per strict requirement
                 // Immediate hard redirect as per strict requirement
-                window.location.href = '/dashboard'
+                // Immediate hard redirect as per strict requirement
+                window.location.assign('/dashboard')
             }
         } catch (err) {
             toast.error('Connection error. Please try again.')

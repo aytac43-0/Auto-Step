@@ -25,10 +25,9 @@ function LoginForm() {
                 setIsLoading(false)
             } else {
                 toast.success('Welcome back! Redirecting...')
-                // Immediate hard redirect as per strict requirement
-                // Immediate hard redirect as per strict requirement
-                // Immediate hard redirect as per strict requirement
-                window.location.assign('/dashboard')
+                // Wait and Force Strategy
+                await new Promise(r => setTimeout(r, 1000))
+                window.location.replace('/dashboard')
             }
         } catch (err) {
             toast.error('Connection error. Please try again.')

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -13,6 +13,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const router = useRouter()
     const supabase = createClient()
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+    const [isAdmin, setIsAdmin] = useState(false)
+
+    useEffect(() => {
+        const checkRole = async () => {
+            const { data: { user } } = await supabase.auth.getUser()
+            if (user) {
+                const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+                if (data?.role === 'admin') setIsAdmin(true)
+            }
+        }
+        checkRole()
+    }, [])
+
+    const navItems = [
+        { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
+        { name: 'Products', href: '/products', icon: ShoppingBag },
+        ...(isAdmin ? [{ name: 'Admin', href: '/dashboard/admin', icon: Settings }] : []),
+    ]
 
     const handleLogout = async () => {
         const { error } = await supabase.auth.signOut()
@@ -23,12 +41,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             router.refresh()
         }
     }
-
-    const navItems = [
-        { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
-        { name: 'Products', href: '/products', icon: ShoppingBag },
-        { name: 'Admin', href: '/dashboard/admin', icon: Settings },
-    ]
 
     return (
         <div className="min-h-screen bg-background text-foreground flex">
@@ -52,8 +64,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 key={item.href}
                                 href={item.href}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${isActive
-                                        ? 'bg-primary/10 text-primary border border-primary/20'
-                                        : 'text-muted-foreground hover:text-white hover:bg-white/5'
+                                    ? 'bg-primary/10 text-primary border border-primary/20'
+                                    : 'text-muted-foreground hover:text-white hover:bg-white/5'
                                     }`}
                             >
                                 <Icon className="w-5 h-5" />

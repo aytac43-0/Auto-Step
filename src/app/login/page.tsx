@@ -26,7 +26,7 @@ function LoginForm() {
             } else {
                 toast.success('Welcome back! Redirecting...')
                 // Immediate hard redirect as per strict requirement
-                router.refresh()
+                // Immediate hard redirect as per strict requirement
                 window.location.href = '/dashboard'
             }
         } catch (err) {

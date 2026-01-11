@@ -26,7 +26,7 @@ function LoginForm() {
             } else {
                 toast.success('Welcome back! Redirecting...')
                 // Wait and Force Strategy
-                await new Promise(r => setTimeout(r, 1000))
+                await new Promise(r => setTimeout(r, 1500))
                 window.location.replace('/dashboard')
             }
         } catch (err) {

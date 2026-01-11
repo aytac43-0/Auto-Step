@@ -4,7 +4,7 @@ import { updateSession } from '@/lib/supabase/middleware'
 export async function middleware(request: NextRequest) {
     const { supabase, response } = await updateSession(request)
     const { data: { user } } = await supabase.auth.getUser()
-    console.log('Session Status:', !!user, request.nextUrl.pathname)
+    console.log('Middleware - Session Check:', !!user)
 
     if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
         return NextResponse.redirect(new URL('/login', request.url))

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { logout } from "@/app/auth/actions";
 
@@ -9,10 +10,11 @@ export default async function Navbar() {
     } = await supabase.auth.getUser();
 
     return (
-        <nav className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-14 max-w-screen-2xl items-center">
+        <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
+            <div className="container flex h-16 max-w-screen-2xl items-center">
                 <Link href="/" className="mr-6 flex items-center space-x-2">
-                    <span className="hidden font-bold sm:inline-block">Auto-Step</span>
+                    <Image src="/logo.png" alt="Auto-Step Logo" width={36} height={36} className="h-9 w-9" />
+                    <span className="hidden font-bold sm:inline-block text-lg tracking-tight">Auto-Step</span>
                 </Link>
                 <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
                     <div className="w-full flex-1 md:w-auto md:flex-none">

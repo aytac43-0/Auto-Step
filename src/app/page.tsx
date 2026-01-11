@@ -7,24 +7,24 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 sm:py-32 lg:pb-32 xl:pb-36 bg-background">
+      <section className="relative overflow-hidden py-20 sm:py-32 lg:pb-32 xl:pb-36 bg-background bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-blue/5 via-transparent to-transparent">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl md:text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl mb-6">
-              Automate Your Digital Step
+            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl mb-6 drop-shadow-sm">
+              Automate Your <span className="text-brand-blue">Digital Step</span>
             </h1>
-            <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
+            <p className="mt-6 text-lg leading-8 text-muted-foreground/80 max-w-2xl mx-auto font-light">
               Professional tools and resources to elevate your workflow.
               Secure, fast, and reliable solutions for the modern agency.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
                 href="/register"
-                className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="rounded-lg bg-brand-blue px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-blue/20 hover:bg-brand-blue/90 transition-all duration-300 hover:scale-105"
               >
                 Get Started
               </Link>
-              <Link href="#contact" className="text-sm font-semibold leading-6 text-foreground">
+              <Link href="#contact" className="text-sm font-semibold leading-6 text-foreground hover:text-brand-blue transition-colors">
                 Contact Sales <span aria-hidden="true">→</span>
               </Link>
             </div>

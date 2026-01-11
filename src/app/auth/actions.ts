@@ -26,7 +26,8 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-    const origin = headers().get('origin')
+    // Use origin from headers, or fallback to site URL, or localhost
+    const origin = headers().get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
     const email = formData.get('email') as string
     const password = formData.get('password') as string
     const username = formData.get('username') as string

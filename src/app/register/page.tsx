@@ -2,14 +2,31 @@
 
 import { signup } from '@/app/auth/actions'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { Suspense, useState } from 'react'
 
 export const dynamic = 'force-dynamic'
 
 function RegisterForm() {
     const searchParams = useSearchParams()
-    const message = searchParams.get('message')
+    const [message, setMessage] = useState(searchParams.get('message') || '')
+    const [isLoading, setIsLoading] = useState(false)
+    const router = useRouter()
+
+    const handleSubmit = async (formData: FormData) => {
+        setIsLoading(true)
+        setMessage('')
+
+        const result = await signup(formData)
+
+        if (result?.error) {
+            setMessage(result.error)
+            setIsLoading(false)
+        } else if (result?.success) {
+            // Redirect to login with success message
+            router.push(`/login?message=${encodeURIComponent(result.message!)}`)
+        }
+    }
 
     return (
         <div className="flex-1 flex flex-col items-center justify-center p-8">
@@ -23,7 +40,7 @@ function RegisterForm() {
                     </p>
                 </div>
 
-                <form className="mt-8 space-y-6" action={signup}>
+                <form className="mt-8 space-y-6" action={handleSubmit}>
                     <div className="rounded-md shadow-sm space-y-4">
                         <div>
                             <label htmlFor="username" className="sr-only">
@@ -72,9 +89,10 @@ function RegisterForm() {
                     <div>
                         <button
                             type="submit"
-                            className="group relative flex w-full justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                            disabled={isLoading}
+                            className="group relative flex w-full justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50"
                         >
-                            Sign up
+                            {isLoading ? 'Signing up...' : 'Sign up'}
                         </button>
                     </div>
 

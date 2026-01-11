@@ -18,11 +18,11 @@ export async function login(formData: FormData) {
     })
 
     if (error) {
-        return redirect('/login?message=Could not authenticate user')
+        return { error: 'Could not authenticate user' }
     }
 
     revalidatePath('/', 'layout')
-    redirect('/dashboard')
+    return { success: true }
 }
 
 export async function signup(formData: FormData) {
@@ -47,10 +47,10 @@ export async function signup(formData: FormData) {
 
     if (error) {
         console.error('Signup error:', error)
-        return redirect('/register?message=Could not authenticate user')
+        return { error: 'Could not authenticate user' }
     }
 
-    return redirect('/login?message=Check email to continue sign in process')
+    return { success: true, message: 'Check email to continue sign in process' }
 }
 
 export async function logout() {

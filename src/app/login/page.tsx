@@ -35,10 +35,14 @@ function LoginForm() {
                 setIsLoading(false)
             } else {
                 toast.success('Login successful! Redirecting...')
-                // Force hard refresh to clear any stale cache
-                router.refresh()
-                // Use window.location for hard redirect to ensure middleware re-runs from clean slate
-                window.location.href = '/dashboard'
+
+                // Wait briefly to let the toast appear and cookie settle
+                setTimeout(() => {
+                    // Force hard refresh to clear any stale cache
+                    router.refresh()
+                    // Use window.location.assign for reliable hard redirect
+                    window.location.assign('/dashboard')
+                }, 500)
             }
         } catch (err) {
             toast.error('An unexpected error occurred.')

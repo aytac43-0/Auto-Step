@@ -1,13 +1,32 @@
+'use client'
+
 import Link from "next/link";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 import { logout } from "@/app/auth/actions";
+import { useEffect, useState } from "react";
+import { User } from "@supabase/supabase-js";
 
-export default async function Navbar() {
+export default function Navbar() {
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
     const supabase = createClient();
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
+
+    useEffect(() => {
+        const getUser = async () => {
+            const { data } = await supabase.auth.getUser();
+            setUser(data.user);
+            setLoading(false);
+        };
+        getUser();
+
+        // Listen for auth state changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+        });
+
+        return () => subscription.unsubscribe();
+    }, [supabase]);
 
     return (
         <nav className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#0a0f1a]/80 backdrop-blur-xl supports-[backdrop-filter]:bg-[#0a0f1a]/60">
@@ -20,7 +39,9 @@ export default async function Navbar() {
                 </Link>
 
                 <div className="flex items-center gap-6">
-                    {user ? (
+                    {loading ? (
+                        <div className="h-9 w-24 bg-white/5 rounded-full animate-pulse"></div>
+                    ) : user ? (
                         <div className="flex items-center gap-4">
                             <Link
                                 href="/dashboard"
@@ -29,7 +50,10 @@ export default async function Navbar() {
                                 Client Portal
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
                             </Link>
-                            <form action={logout}>
+                            <form action={async () => {
+                                await logout();
+                                setUser(null); // Optimistic update
+                            }}>
                                 <button
                                     className="text-sm font-medium px-4 py-2 rounded-full border border-white/10 hover:bg-white/5 hover:text-destructive transition-all"
                                 >

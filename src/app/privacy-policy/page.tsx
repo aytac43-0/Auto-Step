@@ -1,6 +1,8 @@
 import Navbar from "@/components/nav";
 import { Footer } from "@/components/footer";
 
+export const dynamic = 'force-dynamic'
+
 export default function PrivacyPolicy() {
     return (
         <main className="min-h-screen">

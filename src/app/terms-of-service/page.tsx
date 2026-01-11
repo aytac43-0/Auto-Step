@@ -1,6 +1,8 @@
 import { Footer } from "@/components/footer"
 import Navbar from "@/components/nav"
 
+export const dynamic = 'force-dynamic'
+
 export default function TermsOfService() {
     return (
         <div className="min-h-screen bg-background text-foreground font-light">

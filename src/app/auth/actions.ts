@@ -2,9 +2,9 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-
 import { createClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
+import { sendEmail } from '@/lib/email'
 
 export async function login(formData: FormData) {
     const supabase = createClient()
@@ -49,6 +49,20 @@ export async function signup(formData: FormData) {
         console.error('Signup error:', error)
         return { error: 'Could not authenticate user' }
     }
+
+    // Send Welcome Email
+    await sendEmail({
+        to: email,
+        subject: 'Welcome to Auto Step Professional Studio',
+        html: `
+            <div style="font-family: sans-serif; color: #333;">
+                <h1>Welcome into the ecosystem.</h1>
+                <p>Your account has been created successfully.</p>
+                <p>To access your professional dashboard, please verify your email address.</p>
+                <p><i>Auto Step - Professional Automation Solutions</i></p>
+            </div>
+        `
+    })
 
     return { success: true, message: 'Check email to continue sign in process' }
 }

@@ -24,12 +24,7 @@ function LoginForm() {
                 toast.error(result.error)
                 setIsLoading(false)
             } else {
-                toast.success('Welcome back! Redirecting...')
-                // Emergency Debug
-                window.alert('Login Success - Cookies should be set. Click OK to redirect.')
-
-                // Wait and Force Strategy
-                await new Promise(r => setTimeout(r, 1500))
+                // Silent Redirect - Fast and Automatic
                 window.location.replace('/dashboard')
             }
         } catch (err) {

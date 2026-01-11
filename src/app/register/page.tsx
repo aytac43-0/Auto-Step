@@ -2,121 +2,126 @@
 
 import { signup } from '@/app/auth/actions'
 import Link from 'next/link'
-import { useSearchParams, useRouter } from 'next/navigation'
-import { Suspense, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { toast } from 'sonner'
+import { Loader2, ArrowLeft, Lock, Mail, User } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
-
-function RegisterForm() {
-    const searchParams = useSearchParams()
-    const [message, setMessage] = useState(searchParams.get('message') || '')
-    const [isLoading, setIsLoading] = useState(false)
+export default function RegisterPage() {
     const router = useRouter()
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleSubmit = async (formData: FormData) => {
         setIsLoading(true)
-        setMessage('')
 
-        const result = await signup(formData)
+        try {
+            const result = await signup(formData)
 
-        if (result?.error) {
-            setMessage(result.error)
+            if (result?.error) {
+                toast.error(result.error)
+                setIsLoading(false)
+            } else {
+                toast.success('Account created! Please check your email.')
+                router.push('/login?message=Account created')
+            }
+        } catch (err) {
+            toast.error('Connection error. Please try again.')
             setIsLoading(false)
-        } else if (result?.success) {
-            // Redirect to login with success message
-            router.push(`/login?message=${encodeURIComponent(result.message!)}`)
         }
     }
 
     return (
-        <div className="flex-1 flex flex-col items-center justify-center p-8">
-            <div className="w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="text-center">
-                    <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
-                        Create your account
-                    </h2>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                        Join Auto-Step today
-                    </p>
+        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-background">
+            {/* Ambient Background Effects */}
+            <div className="absolute top-0 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-[128px] pointer-events-none" />
+            <div className="absolute bottom-0 -right-20 w-96 h-96 bg-accent/20 rounded-full blur-[128px] pointer-events-none" />
+
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="w-full max-w-md relative z-10"
+            >
+                <div className="mb-8">
+                    <Link href="/" className="inline-flex items-center text-sm text-gray-400 hover:text-white transition-colors group">
+                        <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+                        Back to Home
+                    </Link>
                 </div>
 
-                <form className="mt-8 space-y-6" action={handleSubmit}>
-                    <div className="rounded-md shadow-sm space-y-4">
-                        <div>
-                            <label htmlFor="username" className="sr-only">
-                                Username
-                            </label>
-                            <input
-                                id="username"
-                                name="username"
-                                type="text"
-                                autoComplete="username"
-                                required
-                                className="relative block w-full rounded-md border border-input bg-transparent py-2 px-3 text-foreground placeholder-muted-foreground focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
-                                placeholder="Username (Required)"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="email" className="sr-only">
-                                Email address
-                            </label>
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                autoComplete="email"
-                                required
-                                className="relative block w-full rounded-md border border-input bg-transparent py-2 px-3 text-foreground placeholder-muted-foreground focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
-                                placeholder="Email address"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="password" className="sr-only">
-                                Password
-                            </label>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                autoComplete="new-password"
-                                required
-                                className="relative block w-full rounded-md border border-input bg-transparent py-2 px-3 text-foreground placeholder-muted-foreground focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
-                                placeholder="Password"
-                            />
-                        </div>
+                <div className="glass-card rounded-2xl p-8 md:p-10">
+                    <div className="text-center mb-8">
+                        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                            Create Account
+                        </h1>
+                        <p className="text-gray-400 mt-2 text-sm">
+                            Join Auto-Step and start building.
+                        </p>
                     </div>
 
-                    <div>
-                        <button
-                            type="submit"
+                    <form action={handleSubmit} className="space-y-6">
+                        <div className="space-y-4">
+                            <div className="relative group">
+                                <User className="absolute left-3 top-3 w-5 h-5 text-gray-500 group-focus-within:text-primary transition-colors" />
+                                <input
+                                    name="username"
+                                    type="text"
+                                    required
+                                    placeholder="Username"
+                                    className="w-full bg-input/50 border border-white/10 rounded-lg py-2.5 pl-10 pr-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all font-light"
+                                />
+                            </div>
+
+                            <div className="relative group">
+                                <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-500 group-focus-within:text-primary transition-colors" />
+                                <input
+                                    name="email"
+                                    type="email"
+                                    required
+                                    placeholder="Email Address"
+                                    className="w-full bg-input/50 border border-white/10 rounded-lg py-2.5 pl-10 pr-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all font-light"
+                                />
+                            </div>
+
+                            <div className="relative group">
+                                <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-500 group-focus-within:text-primary transition-colors" />
+                                <input
+                                    name="password"
+                                    type="password"
+                                    required
+                                    placeholder="Password"
+                                    className="w-full bg-input/50 border border-white/10 rounded-lg py-2.5 pl-10 pr-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all font-light"
+                                />
+                            </div>
+                        </div>
+
+                        <motion.button
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
                             disabled={isLoading}
-                            className="group relative flex w-full justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50"
+                            type="submit"
+                            className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2.5 rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {isLoading ? 'Signing up...' : 'Sign up'}
-                        </button>
-                    </div>
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                                    Creating...
+                                </>
+                            ) : (
+                                "Get Started"
+                            )}
+                        </motion.button>
+                    </form>
 
-                    {message && (
-                        <div className="p-4 bg-muted text-sm text-accent-foreground rounded text-center">
-                            {message}
-                        </div>
-                    )}
-
-                    <div className="text-center text-sm">
-                        <Link href="/login" className="font-medium text-primary hover:text-primary/80">
-                            Already have an account? Sign in
+                    <div className="mt-8 text-center text-sm text-gray-500">
+                        Already have an account?{' '}
+                        <Link href="/login" className="text-white hover:text-primary transition-colors font-medium">
+                            Sign In
                         </Link>
                     </div>
-                </form>
-            </div>
+                </div>
+            </motion.div>
         </div>
-    )
-}
-
-export default function RegisterPage() {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <RegisterForm />
-        </Suspense>
     )
 }

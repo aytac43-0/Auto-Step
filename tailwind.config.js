@@ -6,55 +6,39 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                background: "var(--background)",
-                foreground: "var(--foreground)",
-                border: "var(--border)",
-                brand: {
-                    dark: "#0a0f1a",
-                    blue: "#1e40af",
-                    slate: "#1e293b",
-                    light: "#f8fafc",
-                    gray: "#94a3b8",
-                },
+                background: "#0a0f1a", // Deepest Navy
+                foreground: "#f8fafc", // White/Slate-50
+                surface: "#111827", // Card Background (cleaner dark)
                 primary: {
-                    DEFAULT: "#1e40af", // brand-blue
+                    DEFAULT: "#1e40af", // Brand Blue
                     foreground: "#ffffff",
                 },
                 secondary: {
-                    DEFAULT: "#1e293b", // brand-slate
-                    foreground: "#f8fafc",
+                    DEFAULT: "#1e293b",
+                    foreground: "#94a3b8",
                 },
                 muted: {
-                    DEFAULT: "#1e293b", // brand-slate
-                    foreground: "#94a3b8", // brand-gray
+                    DEFAULT: "#1f2937",
+                    foreground: "#9ca3af",
                 },
                 accent: {
-                    DEFAULT: "#1e293b", // brand-slate
-                    foreground: "#f8fafc",
-                },
-                destructive: {
-                    DEFAULT: "#ef4444",
+                    DEFAULT: "#1e40af",
                     foreground: "#ffffff",
                 },
-                input: "#1e293b", // brand-slate
-                ring: "#1e40af", // brand-blue
                 card: {
-                    DEFAULT: "#0a0f1a", // brand-dark
+                    DEFAULT: "#111827", // Surface
                     foreground: "#f8fafc",
                 },
-                popover: {
-                    DEFAULT: "#0a0f1a", // brand-dark
-                    foreground: "#f8fafc",
-                },
+                input: "#1f2937",
+                border: "#374151",
             },
             fontFamily: {
                 sans: ["var(--font-inter)", "sans-serif"],
             },
-            borderRadius: {
-                lg: "0.5rem",
-                md: "calc(0.5rem - 2px)",
-                sm: "calc(0.5rem - 4px)",
-            },
+            backgroundImage: {
+                'glass': 'linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)',
+                'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+            }
         },
     },
     plugins: [],

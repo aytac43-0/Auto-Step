@@ -2,26 +2,16 @@
 
 import { login } from '@/app/auth/actions'
 import Link from 'next/link'
-import { useSearchParams, useRouter } from 'next/navigation'
-import { Suspense, useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
+import { Suspense, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
+import { Loader2, ArrowLeft, Lock, Mail } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
 function LoginForm() {
-    const searchParams = useSearchParams()
     const router = useRouter()
-
-    // Auto-show toast from URL params
-    useEffect(() => {
-        const msg = searchParams.get('message')
-        if (msg) {
-            if (msg.includes('Could not')) toast.error(msg)
-            else toast.info(msg)
-        }
-    }, [searchParams])
-
     const [isLoading, setIsLoading] = useState(false)
 
     const handleSubmit = async (formData: FormData) => {
@@ -34,106 +24,105 @@ function LoginForm() {
                 toast.error(result.error)
                 setIsLoading(false)
             } else {
-                toast.success('Login successful! Redirecting...')
-
-                // Force hard refresh to clear any stale cache
+                toast.success('Welcome back! Redirecting...')
+                // Immediate hard redirect as per strict requirement
                 router.refresh()
-                // Use window.location.href for immediate hard redirect
                 window.location.href = '/dashboard'
             }
         } catch (err) {
-            toast.error('An unexpected error occurred.')
+            toast.error('Connection error. Please try again.')
             setIsLoading(false)
         }
     }
 
     return (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 min-h-screen bg-background text-foreground">
+        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-background">
+            {/* Ambient Background Effects */}
+            <div className="absolute top-0 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-[128px] pointer-events-none" />
+            <div className="absolute bottom-0 -right-20 w-96 h-96 bg-accent/20 rounded-full blur-[128px] pointer-events-none" />
+
             <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-                className="w-full max-w-md space-y-8"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="w-full max-w-md relative z-10"
             >
-                <div>
-                    <Link href="/" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors mb-8 inline-block">
-                        &larr; Back to Home
+                <div className="mb-8">
+                    <Link href="/" className="inline-flex items-center text-sm text-gray-400 hover:text-white transition-colors group">
+                        <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+                        Back to Home
                     </Link>
-                    <div className="text-center">
-                        <h2 className="mt-2 text-3xl font-bold tracking-tight">
-                            Sign in to Auto-Step
-                        </h2>
-                        <p className="mt-2 text-sm text-muted-foreground">
-                            Access your dashboard and manage your products
-                        </p>
-                    </div>
                 </div>
 
-                <form className="mt-8 space-y-6" action={handleSubmit}>
-                    <div className="rounded-md shadow-sm space-y-4">
-                        <div>
-                            <label htmlFor="email" className="sr-only">
-                                Email address
-                            </label>
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                autoComplete="email"
-                                required
-                                className="relative block w-full rounded-md border border-input bg-transparent py-2 px-3 text-foreground placeholder-muted-foreground focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm transition-all duration-200 focus:scale-[1.01]"
-                                placeholder="Email address"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="password" className="sr-only">
-                                Password
-                            </label>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                autoComplete="current-password"
-                                required
-                                className="relative block w-full rounded-md border border-input bg-transparent py-2 px-3 text-foreground placeholder-muted-foreground focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm transition-all duration-200 focus:scale-[1.01]"
-                                placeholder="Password"
-                            />
-                            <div className="text-right mt-1">
-                                <Link href="/forgot-password" className="text-xs font-medium text-primary hover:text-primary/80 transition-colors">
+                <div className="glass-card rounded-2xl p-8 md:p-10">
+                    <div className="text-center mb-8">
+                        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                            Welcome Back
+                        </h1>
+                        <p className="text-gray-400 mt-2 text-sm">
+                            Enter your credentials to access your dashboard.
+                        </p>
+                    </div>
+
+                    <form action={handleSubmit} className="space-y-6">
+                        <div className="space-y-4">
+                            <div className="relative group">
+                                <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-500 group-focus-within:text-primary transition-colors" />
+                                <input
+                                    name="email"
+                                    type="email"
+                                    required
+                                    placeholder="Email Address"
+                                    className="w-full bg-input/50 border border-white/10 rounded-lg py-2.5 pl-10 pr-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all font-light"
+                                />
+                            </div>
+
+                            <div className="relative group">
+                                <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-500 group-focus-within:text-primary transition-colors" />
+                                <input
+                                    name="password"
+                                    type="password"
+                                    required
+                                    placeholder="Password"
+                                    className="w-full bg-input/50 border border-white/10 rounded-lg py-2.5 pl-10 pr-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all font-light"
+                                />
+                            </div>
+
+                            <div className="flex justify-end">
+                                <Link
+                                    href="/forgot-password"
+                                    className="text-xs text-primary hover:text-primary/80 transition-colors"
+                                >
                                     Forgot Password?
                                 </Link>
                             </div>
                         </div>
-                    </div>
 
-                    <div>
                         <motion.button
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            type="submit"
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
                             disabled={isLoading}
-                            className="group relative flex w-full justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
+                            type="submit"
+                            className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2.5 rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isLoading ? (
-                                <span className="flex items-center gap-2">
-                                    <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Signing in...
-                                </span>
+                                <>
+                                    <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                                    Authenticating...
+                                </>
                             ) : (
-                                'Sign in'
+                                "Sign In"
                             )}
                         </motion.button>
-                    </div>
+                    </form>
 
-                    <div className="text-center text-sm">
-                        <Link href="/register" className="font-medium text-primary hover:text-primary/80 transition-colors">
-                            Don't have an account? Sign up
+                    <div className="mt-8 text-center text-sm text-gray-500">
+                        Don't have an account?{' '}
+                        <Link href="/register" className="text-white hover:text-primary transition-colors font-medium">
+                            Create Account
                         </Link>
                     </div>
-                </form>
+                </div>
             </motion.div>
         </div>
     )
@@ -141,7 +130,7 @@ function LoginForm() {
 
 export default function LoginPage() {
     return (
-        <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading...</div>}>
+        <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>}>
             <LoginForm />
         </Suspense>
     )

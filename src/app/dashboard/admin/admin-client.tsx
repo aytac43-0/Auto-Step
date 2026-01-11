@@ -5,17 +5,20 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
-import { Users, ShoppingCart, Package, AlertTriangle, CheckCircle } from 'lucide-react'
+import { Users, ShoppingCart, Package, AlertTriangle, CheckCircle, XCircle } from 'lucide-react'
+import { toggleProductStatus, updateUserAccess } from '@/app/auth/admin-actions'
 
 type Product = {
     id: string
     name: string
     description: string | null
     access_url: string | null
+    status: string // 'active' | 'inactive'
     created_at: string
 }
 
 type Purchase = {
+    id: string
     user_email: string
     product_name: string
     status: string
@@ -25,6 +28,7 @@ type Purchase = {
 export default function AdminClient() {
     const [activeTab, setActiveTab] = useState<'products' | 'create' | 'purchases'>('products')
     const [products, setProducts] = useState<Product[]>([])
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [purchases, setPurchases] = useState<Purchase[]>([])
     const [loading, setLoading] = useState(true)
     const [isAdmin, setIsAdmin] = useState(false)
@@ -62,20 +66,17 @@ export default function AdminClient() {
 
     const fetchData = async () => {
         setLoading(true)
-        // Fetch Products
         const { data: productsData } = await supabase
             .from('products')
             .select('*')
             .order('created_at', { ascending: false })
 
-        if (productsData) setProducts(productsData)
+        if (productsData) setProducts(productsData as any)
 
-        // Fetch Purchases (Mock or Real join)
         const { data: purchasesData } = await supabase
             .from('purchases')
             .select(`
-                status,
-                created_at,
+                id, status, created_at,
                 profiles (email),
                 products (name)
             `)
@@ -83,6 +84,7 @@ export default function AdminClient() {
 
         if (purchasesData) {
             const formattedPurchases = purchasesData.map((p: any) => ({
+                id: p.id,
                 user_email: p.profiles?.email || 'Unknown',
                 product_name: p.products?.name || 'Unknown',
                 status: p.status || 'pending',
@@ -104,6 +106,7 @@ export default function AdminClient() {
                 name: productName,
                 description: productDesc,
                 access_url: accessUrl,
+                status: 'active'
             })
 
         if (error) {
@@ -118,49 +121,32 @@ export default function AdminClient() {
         setIsSubmitting(false)
     }
 
-    const deleteProduct = async (id: string) => {
-        if (!confirm('Are you sure?')) return
-
-        const { error } = await supabase.from('products').delete().eq('id', id)
-        if (!error) {
-            toast.success('Product deleted')
-            fetchData()
+    const handleToggleStatus = async (id: string, currentStatus: string) => {
+        const res = await toggleProductStatus(id, currentStatus)
+        if (res.error) {
+            toast.error(res.error)
         } else {
-            toast.error('Could not delete product')
+            toast.success(`Product ${res.newStatus}`)
+            fetchData()
+        }
+    }
+
+    const handleAccess = async (purchaseId: string, action: 'grant' | 'revoke', email: string) => {
+        const res = await updateUserAccess(purchaseId, action, email)
+        if (res.error) {
+            toast.error(res.error)
+        } else {
+            toast.success(`Access ${action}ed`)
+            fetchData()
         }
     }
 
     if (!isAdmin && loading) return <div className="p-8 text-center text-muted-foreground animate-pulse">Checking permissions...</div>
-    if (!isAdmin) return null // Will redirect
+    if (!isAdmin) return null
 
     return (
         <div className="container py-10 max-w-5xl">
             <h1 className="text-3xl font-bold tracking-tight mb-8">Admin Console</h1>
-
-            {/* Stats Row */}
-            <div className="grid gap-4 md:grid-cols-3 mb-8">
-                <div className="glass-card p-6 rounded-xl flex flex-col space-y-2">
-                    <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-muted-foreground">Total Revenue</span>
-                        <span className="text-primary font-bold text-xl">$---</span>
-                    </div>
-                    <div className="text-xs text-muted-foreground">Based on 'paid' status</div>
-                </div>
-                <div className="glass-card p-6 rounded-xl flex flex-col space-y-2">
-                    <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-muted-foreground">Active Solutions</span>
-                        <span className="text-primary font-bold text-xl">{products.length}</span>
-                    </div>
-                    <div className="text-xs text-muted-foreground">Live in marketplace</div>
-                </div>
-                <div className="glass-card p-6 rounded-xl flex flex-col space-y-2">
-                    <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-muted-foreground">Total Access Grants</span>
-                        <span className="text-primary font-bold text-xl">{purchases.filter(p => p.status === 'paid').length}</span>
-                    </div>
-                    <div className="text-xs text-muted-foreground">Lifetime 'paid' records</div>
-                </div>
-            </div>
 
             <div className="flex space-x-1 mb-8 border-b border-white/10 pb-4 overflow-x-auto">
                 {['products', 'create', 'purchases'].map((tab) => (
@@ -181,23 +167,23 @@ export default function AdminClient() {
                             {products.map(product => (
                                 <motion.div
                                     whileHover={{ scale: 1.01 }}
-                                    key={product.id} className="glass-card flex items-center justify-between p-4 rounded-lg transition-colors"
+                                    key={product.id} className="glass-card flex items-center justify-between p-4 rounded-lg transition-colors border-l-4 border-l-primary"
                                 >
                                     <div>
-                                        <h3 className="font-bold text-white">{product.name}</h3>
-                                        <p className="text-sm text-muted-foreground line-clamp-1">{product.description}</p>
-                                        <div className="text-xs text-primary mt-1 flex items-center gap-1">
-                                            <ShieldCheck className="w-3 h-3" />
-                                            Start URL: {product.access_url}
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-bold text-white">{product.name}</h3>
+                                            <span className={`text-[10px] px-2 py-0.5 rounded uppercase font-bold ${product.status === 'active' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                                                {product.status || 'ACTIVE'}
+                                            </span>
                                         </div>
+                                        <p className="text-sm text-muted-foreground line-clamp-1">{product.description}</p>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <button className="text-xs font-medium bg-green-500/10 text-green-500 px-3 py-1 rounded border border-green-500/20">Active</button>
                                         <button
-                                            onClick={() => deleteProduct(product.id)}
-                                            className="text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 rounded px-3 py-1 transition-colors border border-destructive/20"
+                                            onClick={() => handleToggleStatus(product.id, product.status || 'active')}
+                                            className="text-xs font-medium bg-secondary text-white hover:bg-white/10 rounded px-3 py-2 transition-colors"
                                         >
-                                            Decommission
+                                            {product.status === 'active' ? 'Deactivate' : 'Activate'}
                                         </button>
                                     </div>
                                 </motion.div>
@@ -268,6 +254,7 @@ export default function AdminClient() {
                                         <th className="px-4 py-3 font-medium">Client</th>
                                         <th className="px-4 py-3 font-medium">Solution</th>
                                         <th className="px-4 py-3 font-medium">Status</th>
+                                        <th className="px-4 py-3 font-medium">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/10 bg-black/20">
@@ -277,15 +264,32 @@ export default function AdminClient() {
                                             <td className="px-4 py-3 text-white">{purchase.user_email}</td>
                                             <td className="px-4 py-3 font-medium text-white">{purchase.product_name}</td>
                                             <td className="px-4 py-3">
-                                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${purchase.status === 'paid' ? 'bg-green-500/10 text-green-500' : 'bg-yellow-500/10 text-yellow-500'}`}>
+                                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${purchase.status === 'paid' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
                                                     {purchase.status}
                                                 </span>
+                                            </td>
+                                            <td className="px-4 py-3 flex gap-2">
+                                                {purchase.status === 'paid' ? (
+                                                    <button
+                                                        onClick={() => handleAccess(purchase.id, 'revoke', purchase.user_email)}
+                                                        className="p-1 hover:bg-red-500/20 text-red-500 rounded" title="Revoke Access"
+                                                    >
+                                                        <XCircle className="w-4 h-4" />
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => handleAccess(purchase.id, 'grant', purchase.user_email)}
+                                                        className="p-1 hover:bg-green-500/20 text-green-500 rounded" title="Grant Access"
+                                                    >
+                                                        <CheckCircle className="w-4 h-4" />
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}
                                     {purchases.length === 0 && (
                                         <tr>
-                                            <td colSpan={4} className="px-4 py-12 text-center text-muted-foreground">
+                                            <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground">
                                                 No access records found.
                                             </td>
                                         </tr>

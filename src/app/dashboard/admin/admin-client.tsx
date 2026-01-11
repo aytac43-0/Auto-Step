@@ -3,6 +3,9 @@
 import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
+import { toast } from 'sonner'
+import { Users, ShoppingCart, Package } from 'lucide-react'
 
 type Product = {
     id: string
@@ -30,7 +33,6 @@ export default function AdminClient() {
     const [productDesc, setProductDesc] = useState('')
     const [accessUrl, setAccessUrl] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [message, setMessage] = useState('')
 
     const router = useRouter()
     const supabase = createClient()
@@ -92,7 +94,6 @@ export default function AdminClient() {
     const handleCreateProduct = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsSubmitting(true)
-        setMessage('')
 
         const { error } = await supabase
             .from('products')
@@ -103,13 +104,13 @@ export default function AdminClient() {
             })
 
         if (error) {
-            setMessage('Error creating product')
+            toast.error('Error creating product')
         } else {
-            setMessage('Product created successfully!')
+            toast.success('Product created successfully!')
             setProductName('')
             setProductDesc('')
             setAccessUrl('')
-            fetchData() // Refresh list
+            fetchData()
         }
         setIsSubmitting(false)
     }
@@ -119,152 +120,170 @@ export default function AdminClient() {
 
         const { error } = await supabase.from('products').delete().eq('id', id)
         if (!error) {
+            toast.success('Product deleted')
             fetchData()
+        } else {
+            toast.error('Could not delete product')
         }
     }
 
-    if (!isAdmin && loading) return <div className="p-8 text-center text-muted-foreground">Checking permissions...</div>
+    if (!isAdmin && loading) return <div className="p-8 text-center text-muted-foreground animate-pulse">Checking permissions...</div>
     if (!isAdmin) return null // Will redirect
 
     return (
         <div className="container py-10 max-w-5xl">
             <h1 className="text-3xl font-bold tracking-tight mb-8">Admin Dashboard</h1>
 
-            <div className="flex space-x-4 mb-8 border-b border-border pb-4">
-                <button
-                    onClick={() => setActiveTab('products')}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'products' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                    Manage Products
-                </button>
-                <button
-                    onClick={() => setActiveTab('create')}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'create' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                    Create Product
-                </button>
-                <button
-                    onClick={() => setActiveTab('purchases')}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'purchases' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                    View Purchases
-                </button>
+            {/* Stats Row */}
+            <div className="grid gap-4 md:grid-cols-3 mb-8">
+                <div className="rounded-xl border bg-card text-card-foreground shadow p-6 flex flex-col space-y-2">
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-muted-foreground">Total Revenue</span>
+                        <span className="text-brand-blue font-bold text-xl">$---</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">+0% from last month</div>
+                </div>
+                <div className="rounded-xl border bg-card text-card-foreground shadow p-6 flex flex-col space-y-2">
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-muted-foreground">Active Products</span>
+                        <span className="text-brand-blue font-bold text-xl">{products.length}</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">Currently listed</div>
+                </div>
+                <div className="rounded-xl border bg-card text-card-foreground shadow p-6 flex flex-col space-y-2">
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-muted-foreground">Total Sales</span>
+                        <span className="text-brand-blue font-bold text-xl">{purchases.length}</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">Lifetime transactions</div>
+                </div>
             </div>
 
-            {activeTab === 'products' && (
-                <div className="space-y-4">
-                    <h2 className="text-xl font-semibold mb-4">All Products</h2>
-                    <div className="grid gap-4">
-                        {products.map(product => (
-                            <div key={product.id} className="flex items-center justify-between p-4 border rounded-lg bg-card text-card-foreground shadow-sm">
-                                <div>
-                                    <h3 className="font-bold">{product.name}</h3>
-                                    <p className="text-sm text-muted-foreground">{product.description}</p>
-                                    <div className="text-xs text-brand-blue mt-1">Access: {product.access_url}</div>
-                                </div>
-                                <button
-                                    onClick={() => deleteProduct(product.id)}
-                                    className="text-sm text-destructive hover:underline px-3 py-1"
+            <div className="flex space-x-1 mb-8 border-b border-border pb-4 overflow-x-auto">
+                {['products', 'create', 'purchases'].map((tab) => (
+                    <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab as any)}
+                        className={`px-4 py-2 text-sm font-medium rounded-md transition-colors capitalize ${activeTab === tab ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+                    >
+                        {tab === 'products' ? 'Manage Products' : tab === 'create' ? 'Create Product' : 'View Purchases'}
+                    </button>
+                ))}
+            </div>
+
+            <div className="min-h-[400px]">
+                {activeTab === 'products' && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                        <div className="grid gap-4">
+                            {products.map(product => (
+                                <motion.div
+                                    whileHover={{ scale: 1.01 }}
+                                    key={product.id} className="flex items-center justify-between p-4 border rounded-lg bg-card text-card-foreground shadow-sm transition-colors"
                                 >
-                                    Delete
-                                </button>
+                                    <div>
+                                        <h3 className="font-bold">{product.name}</h3>
+                                        <p className="text-sm text-muted-foreground line-clamp-1">{product.description}</p>
+                                        <div className="text-xs text-brand-blue mt-1">Access: {product.access_url}</div>
+                                    </div>
+                                    <button
+                                        onClick={() => deleteProduct(product.id)}
+                                        className="text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 rounded px-3 py-1 transition-colors"
+                                    >
+                                        Delete
+                                    </button>
+                                </motion.div>
+                            ))}
+                            {products.length === 0 && <p className="text-muted-foreground text-center py-10">No products found.</p>}
+                        </div>
+                    </motion.div>
+                )}
+
+                {activeTab === 'create' && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-xl mx-auto">
+                        <form onSubmit={handleCreateProduct} className="space-y-4 bg-card p-6 rounded-lg border shadow-sm">
+                            <h2 className="text-xl font-semibold mb-4">Add New Product</h2>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Product Name</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={productName}
+                                    onChange={e => setProductName(e.target.value)}
+                                    className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all focus:scale-[1.01]"
+                                    placeholder="E.g. SEO Masterclass"
+                                />
                             </div>
-                        ))}
-                        {products.length === 0 && <p className="text-muted-foreground">No products found.</p>}
-                    </div>
-                </div>
-            )}
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Description</label>
+                                <textarea
+                                    required
+                                    value={productDesc}
+                                    onChange={e => setProductDesc(e.target.value)}
+                                    className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all focus:scale-[1.01]"
+                                    rows={3}
+                                    placeholder="Product details..."
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Access URL (Private)</label>
+                                <input
+                                    type="url"
+                                    required
+                                    value={accessUrl}
+                                    onChange={e => setAccessUrl(e.target.value)}
+                                    className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all focus:scale-[1.01]"
+                                    placeholder="https://drive.google.com/..."
+                                />
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    The secure link sent to buyers.
+                                </p>
+                            </div>
 
-            {activeTab === 'create' && (
-                <div className="max-w-xl">
-                    <h2 className="text-xl font-semibold mb-4">Add New Product</h2>
-                    <form onSubmit={handleCreateProduct} className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Product Name</label>
-                            <input
-                                type="text"
-                                required
-                                value={productName}
-                                onChange={e => setProductName(e.target.value)}
-                                className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                placeholder="E.g. SEO Masterclass"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Description</label>
-                            <textarea
-                                required
-                                value={productDesc}
-                                onChange={e => setProductDesc(e.target.value)}
-                                className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                rows={3}
-                                placeholder="Product details..."
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Access URL (Private)</label>
-                            <input
-                                type="url"
-                                required
-                                value={accessUrl}
-                                onChange={e => setAccessUrl(e.target.value)}
-                                className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                placeholder="https://drive.google.com/..."
-                            />
-                            <p className="text-xs text-muted-foreground mt-1">
-                                This is the link users will be redirected to after purchase validation.
-                            </p>
-                        </div>
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="w-full bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-all"
+                            >
+                                {isSubmitting ? 'Creating...' : 'Create Product'}
+                            </motion.button>
+                        </form>
+                    </motion.div>
+                )}
 
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 disabled:opacity-50"
-                        >
-                            {isSubmitting ? 'Creating...' : 'Create Product'}
-                        </button>
-
-                        {message && (
-                            <p className={`text-sm ${message.includes('success') ? 'text-green-500' : 'text-destructive'}`}>
-                                {message}
-                            </p>
-                        )}
-                    </form>
-                </div>
-            )}
-
-            {activeTab === 'purchases' && (
-                <div className="space-y-4">
-                    <h2 className="text-xl font-semibold mb-4">Customer Transactions</h2>
-                    <div className="rounded-md border">
-                        <table className="w-full text-sm text-left">
-                            <thead className="bg-muted text-muted-foreground">
-                                <tr>
-                                    <th className="px-4 py-3 font-medium">Date</th>
-                                    <th className="px-4 py-3 font-medium">Customer</th>
-                                    <th className="px-4 py-3 font-medium">Product</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-border">
-                                {purchases.map((purchase, i) => (
-                                    <tr key={i} className="bg-card">
-                                        <td className="px-4 py-3">{new Date(purchase.created_at).toLocaleDateString()}</td>
-                                        <td className="px-4 py-3">{purchase.user_email}</td>
-                                        <td className="px-4 py-3 font-medium">{purchase.product_name}</td>
-                                    </tr>
-                                ))}
-                                {purchases.length === 0 && (
+                {activeTab === 'purchases' && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                        <div className="rounded-md border overflow-hidden">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-muted text-muted-foreground">
                                     <tr>
-                                        <td colSpan={3} className="px-4 py-8 text-center text-muted-foreground">
-                                            No purchases found.
-                                        </td>
+                                        <th className="px-4 py-3 font-medium">Date</th>
+                                        <th className="px-4 py-3 font-medium">Customer</th>
+                                        <th className="px-4 py-3 font-medium">Product</th>
                                     </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            )}
+                                </thead>
+                                <tbody className="divide-y divide-border bg-card">
+                                    {purchases.map((purchase, i) => (
+                                        <tr key={i} className="hover:bg-muted/50 transition-colors">
+                                            <td className="px-4 py-3">{new Date(purchase.created_at).toLocaleDateString()}</td>
+                                            <td className="px-4 py-3">{purchase.user_email}</td>
+                                            <td className="px-4 py-3 font-medium">{purchase.product_name}</td>
+                                        </tr>
+                                    ))}
+                                    {purchases.length === 0 && (
+                                        <tr>
+                                            <td colSpan={3} className="px-4 py-12 text-center text-muted-foreground">
+                                                No purchases found.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </motion.div>
+                )}
+            </div>
         </div>
     )
 }

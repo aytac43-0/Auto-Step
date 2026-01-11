@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Toaster } from 'sonner';
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -7,6 +8,11 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 export const metadata: Metadata = {
   title: "Auto-Step | Professional Digital Solutions",
   description: "Your partner in digital excellence.",
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
+  }
 };
 
 export default function RootLayout({
@@ -17,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased bg-background text-foreground`}>
+        <Toaster position="top-center" richColors theme="dark" />
         <div className="min-h-screen flex flex-col">
           {children}
         </div>

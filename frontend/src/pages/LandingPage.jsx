@@ -327,7 +327,7 @@ const LandingPage = () => {
                     ))}
                   </div>
                   <p className="text-muted-foreground leading-relaxed">
-                    "{testimonial.content}"
+                    &ldquo;{testimonial.content}&rdquo;
                   </p>
                   <div className="pt-4 border-t border-border">
                     <div className="font-semibold">{testimonial.name}</div>

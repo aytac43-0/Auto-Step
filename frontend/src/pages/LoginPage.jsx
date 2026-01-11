@@ -160,7 +160,7 @@ const LoginPage = () => {
             </form>
             
             <p className="text-center text-sm text-muted-foreground">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <button 
                 className="text-primary hover:text-primary/80 transition-colors font-medium"
                 onClick={() => toast.info('Sign up is not available in this demo')}

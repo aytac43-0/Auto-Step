@@ -331,7 +331,7 @@ const DashboardPage = () => {
                 </div>
                 <h3 className="text-2xl font-bold">More Features Coming Soon</h3>
                 <p className="text-muted-foreground">
-                  We're working on advanced analytics, workflow builders, and integration marketplace. 
+                  We&apos;re working on advanced analytics, workflow builders, and integration marketplace. 
                   This is a UI prototype showcasing the design and layout.
                 </p>
                 <Badge className="bg-primary/10 text-primary border-primary/20">

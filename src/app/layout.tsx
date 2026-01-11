@@ -42,6 +42,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+      </head>
       <body className={`${inter.variable} font-sans antialiased bg-background text-foreground`}>
         <Toaster position="top-center" richColors theme="dark" />
         <div className="min-h-screen flex flex-col">

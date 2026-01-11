@@ -6,13 +6,16 @@ export async function middleware(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     console.log('Middleware - Session Check:', !!user)
 
+    /* 
+    // TEMPORARY OVERRIDE: DISABLE REDIRECTS FOR DEBUGGING
     if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
     if (user && (request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/register'))) {
-        return NextResponse.redirect(new URL('/dashboard', request.url))
+         return NextResponse.redirect(new URL('/dashboard', request.url))
     }
+    */
 
     return response
 }
